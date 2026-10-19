@@ -1,0 +1,11 @@
+{
+  "schema": "jackai-box.e2b-sdk-qualification/v1",
+  "repository": "https://github.com/jackai-dev/boxfleet-sdk-python",
+  "organization": "https://github.com/orgs/jackai-dev",
+  "product": "BoxFleet (boxfleet / boxfleek)",
+  "generator": "OmniWrap 2.0.0",
+  "e2bJobId": "job-090accb4-bba2-4381-807d-b83d9731047b",
+  "e2bBoxId": "ipe9rl7pj5hsbk6d0rhuv",
+  "exitCode": 0,
+  "verifiedAt": "2026-10-19T05:55:08.443Z"
+}

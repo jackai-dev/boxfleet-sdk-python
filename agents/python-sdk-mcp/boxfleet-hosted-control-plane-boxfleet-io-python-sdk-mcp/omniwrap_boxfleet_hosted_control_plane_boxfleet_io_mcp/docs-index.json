@@ -1,0 +1,2638 @@
+{
+  "documents": [
+    {
+      "access": "write",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.cancel_job(job_id=...)",
+      "id": "operation:cancelJob",
+      "kind": "operation",
+      "method": "POST",
+      "operation_id": "cancelJob",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "jobId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/jobs/{jobId}/cancel",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "OK",
+          "status_code": "200"
+        }
+      ],
+      "sdk_method": "cancel_job",
+      "search_text": "cancelJob POST /v1/jobs/{jobId}/cancel Cancel a job Requires a JackAISaaS product session. Answers 503 execution_api_unavailable until production storage is configured. cancel_job write jobId 200 productSession",
+      "summary": "Cancel a job",
+      "text": "POST /v1/jobs/{jobId}/cancel\noperation_id: cancelJob\nsummary: Cancel a job\ndescription: Requires a JackAISaaS product session. Answers 503 execution_api_unavailable until production storage is configured.\nsdk_method: cancel_job\naccess: write\nparameters: jobId (string) [required]\nresponses: 200\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.cancel_job(job_id=...)"
+    },
+    {
+      "access": "write",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.close_hosted_workspace(workspace_id=...)",
+      "id": "operation:closeHostedWorkspace",
+      "kind": "operation",
+      "method": "POST",
+      "operation_id": "closeHostedWorkspace",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "workspaceId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/workspaces/{workspaceId}/close",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Authorized workspace state or result",
+          "status_code": "200"
+        },
+        {
+          "description": "Invalid bounded request",
+          "status_code": "400"
+        },
+        {
+          "description": "Product session rejected",
+          "status_code": "401"
+        },
+        {
+          "description": "Hub entitlement or atomic quota denied",
+          "status_code": "402"
+        },
+        {
+          "description": "Operation or fleet policy denied",
+          "status_code": "403"
+        },
+        {
+          "description": "Resource not found in the authorized tenant and product environment",
+          "status_code": "404"
+        },
+        {
+          "description": "Idempotency conflict, incompatible state or cleanup unconfirmed",
+          "status_code": "409"
+        },
+        {
+          "description": "Operator provider, template, storage or authority unavailable",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "close_hosted_workspace",
+      "search_text": "closeHostedWorkspace POST /v1/workspaces/{workspaceId}/close Delete the owned provider box and private source; available after paid entitlement loss with current close authority close_hosted_workspace write workspaceId 200 400 401 402 403 404 409 503 productSession",
+      "summary": "Delete the owned provider box and private source; available after paid entitlement loss with current close authority",
+      "text": "POST /v1/workspaces/{workspaceId}/close\noperation_id: closeHostedWorkspace\nsummary: Delete the owned provider box and private source; available after paid entitlement loss with current close authority\nsdk_method: close_hosted_workspace\naccess: write\nparameters: workspaceId (string) [required]\nresponses: 200, 400, 401, 402, 403, 404, 409, 503\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.close_hosted_workspace(workspace_id=...)"
+    },
+    {
+      "access": "write",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.close_persistent_box(box_id=..., organization_id=...)",
+      "id": "operation:closePersistentBox",
+      "kind": "operation",
+      "method": "POST",
+      "operation_id": "closePersistentBox",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "description": "",
+          "location": "path",
+          "name": "boxId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/persistent-boxes/{boxId}/close",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Closure is recorded; repeat requests return the same result without deleting again.",
+          "status_code": "200"
+        },
+        {
+          "description": "Closure is unconfirmed. Lost, late, negative or mismatched acknowledgements and failed receipt persistence retain reservations. Repeat requests never dispatch another deletion; operator reconciliation",
+          "status_code": "202"
+        },
+        {
+          "description": "Invalid UUID, body or query parameters.",
+          "status_code": "400"
+        },
+        {
+          "description": "Missing or rejected product session.",
+          "status_code": "401"
+        },
+        {
+          "description": "Current authority denied cleanup or the organization/product/environment differs.",
+          "status_code": "403"
+        },
+        {
+          "description": "No durable box in this exact target scope.",
+          "status_code": "404"
+        },
+        {
+          "description": "Unconfirmed or changed provider allocation requires operator reconciliation.",
+          "status_code": "409"
+        },
+        {
+          "description": "Authority or storage unavailable, or no matching operator provider adapter. Missing configuration refuses before any close intention or deletion.",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "close_persistent_box",
+      "search_text": "closePersistentBox POST /v1/organizations/{organizationId}/persistent-boxes/{boxId}/close Close a hosted durable box through its pinned operator provider Requires fresh JackAISaaS boxes.close authorization with boxfleet:boxes:write and exact organization/product/environment ownership. Cleanup remains available after a paid-feature downgrade. No body or query parameters are accepted. A serialized durable intention admits at most one provider deletion. Only a matching positive acknowledgement releases retained count and storage; runtime remains reserved and not-metered. Responses are private and not cacheable. The /api alias has the same authorization. An operator must configure the trusted provider adapter; this endpoint does not provision or activate providers. close_persistent_box write organizationId boxId 200 202 400 401 403 404 409 503 productSession",
+      "summary": "Close a hosted durable box through its pinned operator provider",
+      "text": "POST /v1/organizations/{organizationId}/persistent-boxes/{boxId}/close\noperation_id: closePersistentBox\nsummary: Close a hosted durable box through its pinned operator provider\ndescription: Requires fresh JackAISaaS boxes.close authorization with boxfleet:boxes:write and exact organization/product/environment ownership. Cleanup remains available after a paid-feature downgrade. No body or query parameters are accepted. A serialized durable intention admits at most one provider deletion. Only a matching positive acknowledgement releases retained count and storage; runtime remains reserved and not-metered. Responses are private and not cacheable. The /api alias has the same authorization. An operator must configure the trusted provider adapter; this endpoint does not provision or ac\nsdk_method: close_persistent_box\naccess: write\nparameters: organizationId (string) [required], boxId (string) [required]\nresponses: 200, 202, 400, 401, 403, 404, 409, 503\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.close_persistent_box(box_id=..., organization_id=...)"
+    },
+    {
+      "access": "write",
+      "auth": [
+        {
+          "name": "adminToken",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.control_user(body=...)",
+      "id": "operation:controlUser",
+      "kind": "operation",
+      "method": "POST",
+      "operation_id": "controlUser",
+      "parameters": [],
+      "path": "/v1/admin/users",
+      "request_media": [
+        "application/json"
+      ],
+      "responses": [
+        {
+          "description": "Applied",
+          "status_code": "200"
+        },
+        {
+          "description": "Admin token required",
+          "status_code": "401"
+        },
+        {
+          "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl.",
+          "status_code": "409"
+        }
+      ],
+      "sdk_method": "control_user",
+      "search_text": "controlUser POST /v1/admin/users Disable, ban, delete or re-enable a user In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. control_user write 200 401 409 adminToken",
+      "summary": "Disable, ban, delete or re-enable a user",
+      "text": "POST /v1/admin/users\noperation_id: controlUser\nsummary: Disable, ban, delete or re-enable a user\ndescription: In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode.\nsdk_method: control_user\naccess: write\nrequest: application/json\nresponses: 200, 401, 409\nauth: adminToken\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.control_user(body=...)"
+    },
+    {
+      "access": "write",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.create_billing_portal(organization_id=...)",
+      "id": "operation:createBillingPortal",
+      "kind": "operation",
+      "method": "POST",
+      "operation_id": "createBillingPortal",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/billing/portal",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "portalUrl",
+          "status_code": "201"
+        },
+        {
+          "description": "No Stripe customer yet",
+          "status_code": "404"
+        },
+        {
+          "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl.",
+          "status_code": "409"
+        }
+      ],
+      "sdk_method": "create_billing_portal",
+      "search_text": "createBillingPortal POST /v1/organizations/{organizationId}/billing/portal Open the Stripe customer portal In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Stripe test mode only (docs/BILLING.md); 503 billing_unavailable without a test key. create_billing_portal write organizationId 201 404 409 productSession",
+      "summary": "Open the Stripe customer portal",
+      "text": "POST /v1/organizations/{organizationId}/billing/portal\noperation_id: createBillingPortal\nsummary: Open the Stripe customer portal\ndescription: In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Stripe test mode only (docs/BILLING.md); 503 billing_unavailable without a test key.\nsdk_method: create_billing_portal\naccess: write\nparameters: organizationId (string) [required]\nresponses: 201, 404, 409\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.create_billing_portal(organization_id=...)"
+    },
+    {
+      "access": "write",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.create_box(body=..., organization_id=...)",
+      "id": "operation:createBox",
+      "kind": "operation",
+      "method": "POST",
+      "operation_id": "createBox",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/boxes",
+      "request_media": [
+        "application/json"
+      ],
+      "responses": [
+        {
+          "description": "Box running at the provider",
+          "status_code": "201"
+        },
+        {
+          "description": "Concurrent-box limit reached",
+          "status_code": "402"
+        },
+        {
+          "description": "The provider refused; recorded as failed",
+          "status_code": "502"
+        },
+        {
+          "description": "No provider or no storage",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "create_box",
+      "search_text": "createBox POST /v1/organizations/{organizationId}/boxes Create a hosted box Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. The box is created by the configured provider (E2B) and counts against the plan's concurrent-box limit, checked by the database (402 quota_exceeded). Without a provider: 503 provider_unavailable and nothing is recorded. The response carries the provider access token once; it is never stored. In managed-connected mode org.boxes must be explicitly true and concurrentBoxes must be supplied by the Hub as a nonnegative integer or -1. Missing or malformed quotas answer 402 quota_unavailable before provider creation. create_box write organizationId provider template timeoutSeconds 201 402 502 503 productSession",
+      "summary": "Create a hosted box",
+      "text": "POST /v1/organizations/{organizationId}/boxes\noperation_id: createBox\nsummary: Create a hosted box\ndescription: Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. The box is created by the configured provider (E2B) and counts against the plan's concurrent-box limit, checked by the database (402 quota_exceeded). Without a provider: 503 provider_unavailable and nothing is recorded. The response carries the provider access token once; it is never stored. In managed-connected mode org.boxes must be explicitly true and concurrentBoxes must be supplied by the Hub as a nonnegative integer or -1. Missing or malformed quotas answer 402 quota_unavailab\nsdk_method: create_box\naccess: write\nparameters: organizationId (string) [required]\nrequest: application/json\nresponses: 201, 402, 502, 503\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.create_box(body=..., organization_id=...)"
+    },
+    {
+      "access": "write",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.create_checkout(body=..., organization_id=...)",
+      "id": "operation:createCheckout",
+      "kind": "operation",
+      "method": "POST",
+      "operation_id": "createCheckout",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/billing/checkout",
+      "request_media": [
+        "application/json"
+      ],
+      "responses": [
+        {
+          "description": "checkoutUrl of the Stripe Checkout Session",
+          "status_code": "201"
+        },
+        {
+          "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl. Autonomous mode: Plan not on sale or subscription exists",
+          "status_code": "409"
+        }
+      ],
+      "sdk_method": "create_checkout",
+      "search_text": "createCheckout POST /v1/organizations/{organizationId}/billing/checkout Start a subscription with Stripe Checkout In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Stripe test mode only (docs/BILLING.md); 503 billing_unavailable without a test key. Only plans the catalog has on sale (409 plan_not_on_sale); 409 subscription_exists when one already grants a plan. create_checkout write organizationId planKey 201 409 productSession",
+      "summary": "Start a subscription with Stripe Checkout",
+      "text": "POST /v1/organizations/{organizationId}/billing/checkout\noperation_id: createCheckout\nsummary: Start a subscription with Stripe Checkout\ndescription: In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Stripe test mode only (docs/BILLING.md); 503 billing_unavailable without a test key. Only plans the catalog has on sale (409 plan_not_on_sale); 409 subscription_exists when one already grants a plan.\nsdk_method: create_checkout\naccess: write\nparameters: organizationId (string) [required]\nrequest: application/json\nresponses: 201, 409\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.create_checkout(body=..., organization_id=...)"
+    },
+    {
+      "access": "read-only",
+      "auth": [],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_accounts_config()",
+      "id": "operation:getAccountsConfig",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "getAccountsConfig",
+      "parameters": [],
+      "path": "/v1/accounts/config",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "OK",
+          "status_code": "200"
+        }
+      ],
+      "sdk_method": "get_accounts_config",
+      "search_text": "getAccountsConfig GET /v1/accounts/config Account authority configuration (non-secret) get_accounts_config read-only 200",
+      "summary": "Account authority configuration (non-secret)",
+      "text": "GET /v1/accounts/config\noperation_id: getAccountsConfig\nsummary: Account authority configuration (non-secret)\nsdk_method: get_accounts_config\naccess: read-only\nresponses: 200\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_accounts_config()"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "adminToken",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_admin_console()",
+      "id": "operation:getAdminConsole",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "getAdminConsole",
+      "parameters": [],
+      "path": "/v1/admin/console",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Console",
+          "status_code": "200"
+        },
+        {
+          "description": "Admin token required",
+          "status_code": "401"
+        }
+      ],
+      "sdk_method": "get_admin_console",
+      "search_text": "getAdminConsole GET /v1/admin/console Super-admin JSON console In managed-connected mode these local records are historical, with authoritative:false and authority:local-history; they do not grant account roles or entitlements. get_admin_console read-only 200 401 adminToken",
+      "summary": "Super-admin JSON console",
+      "text": "GET /v1/admin/console\noperation_id: getAdminConsole\nsummary: Super-admin JSON console\ndescription: In managed-connected mode these local records are historical, with authoritative:false and authority:local-history; they do not grant account roles or entitlements.\nsdk_method: get_admin_console\naccess: read-only\nresponses: 200, 401\nauth: adminToken\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_admin_console()"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "adminToken",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_admin_plans()",
+      "id": "operation:getAdminPlans",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "getAdminPlans",
+      "parameters": [],
+      "path": "/v1/admin/plans",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Plans",
+          "status_code": "200"
+        },
+        {
+          "description": "Admin token required",
+          "status_code": "401"
+        }
+      ],
+      "sdk_method": "get_admin_plans",
+      "search_text": "getAdminPlans GET /v1/admin/plans Plan catalog with admin controls In managed-connected mode these local records are historical, with authoritative:false and authority:local-history; they do not grant account roles or entitlements. get_admin_plans read-only 200 401 adminToken",
+      "summary": "Plan catalog with admin controls",
+      "text": "GET /v1/admin/plans\noperation_id: getAdminPlans\nsummary: Plan catalog with admin controls\ndescription: In managed-connected mode these local records are historical, with authoritative:false and authority:local-history; they do not grant account roles or entitlements.\nsdk_method: get_admin_plans\naccess: read-only\nresponses: 200, 401\nauth: adminToken\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_admin_plans()"
+    },
+    {
+      "access": "read-only",
+      "auth": [],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_auth_gate()",
+      "id": "operation:getAuthGate",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "getAuthGate",
+      "parameters": [],
+      "path": "/v1/auth/gate",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "OK",
+          "status_code": "200"
+        }
+      ],
+      "sdk_method": "get_auth_gate",
+      "search_text": "getAuthGate GET /v1/auth/gate Registration gate state and waitlist count Managed mode reports JackAISaaS account authority and local registration disabled. Autonomous modes report their local registration gate. get_auth_gate read-only 200",
+      "summary": "Registration gate state and waitlist count",
+      "text": "GET /v1/auth/gate\noperation_id: getAuthGate\nsummary: Registration gate state and waitlist count\ndescription: Managed mode reports JackAISaaS account authority and local registration disabled. Autonomous modes report their local registration gate.\nsdk_method: get_auth_gate\naccess: read-only\nresponses: 200\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_auth_gate()"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_billing(organization_id=...)",
+      "id": "operation:getBilling",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "getBilling",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/billing",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Billing status",
+          "status_code": "200"
+        },
+        {
+          "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl.",
+          "status_code": "409"
+        }
+      ],
+      "sdk_method": "get_billing",
+      "search_text": "getBilling GET /v1/organizations/{organizationId}/billing Billing status In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Stripe test mode only (docs/BILLING.md); 503 billing_unavailable without a test key. The stored subscription, the entitlement source and this month's usage. get_billing read-only organizationId 200 409 productSession",
+      "summary": "Billing status",
+      "text": "GET /v1/organizations/{organizationId}/billing\noperation_id: getBilling\nsummary: Billing status\ndescription: In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Stripe test mode only (docs/BILLING.md); 503 billing_unavailable without a test key. The stored subscription, the entitlement source and this month's usage.\nsdk_method: get_billing\naccess: read-only\nparameters: organizationId (string) [required]\nresponses: 200, 409\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_billing(organization_id=...)"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_box(box_id=..., organization_id=...)",
+      "id": "operation:getBox",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "getBox",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "description": "",
+          "location": "path",
+          "name": "boxId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/boxes/{boxId}",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Stored box",
+          "status_code": "200"
+        },
+        {
+          "description": "Unknown box",
+          "status_code": "404"
+        }
+      ],
+      "sdk_method": "get_box",
+      "search_text": "getBox GET /v1/organizations/{organizationId}/boxes/{boxId} Read a hosted box Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. get_box read-only organizationId boxId 200 404 productSession",
+      "summary": "Read a hosted box",
+      "text": "GET /v1/organizations/{organizationId}/boxes/{boxId}\noperation_id: getBox\nsummary: Read a hosted box\ndescription: Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured.\nsdk_method: get_box\naccess: read-only\nparameters: organizationId (string) [required], boxId (string) [required]\nresponses: 200, 404\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_box(box_id=..., organization_id=...)"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_entitlements(organization_id=...)",
+      "id": "operation:getEntitlements",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "getEntitlements",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/entitlements",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Entitlements and usage",
+          "status_code": "200"
+        }
+      ],
+      "sdk_method": "get_entitlements",
+      "search_text": "getEntitlements GET /v1/organizations/{organizationId}/entitlements Organization entitlements and usage Requires the entitlements.read operation on a JackAISaaS product session for this exact organization and environment. In managed-connected mode returns only Hub-sourced flags and quotas, plus observed local usage; no local catalog or Stripe fallback. Missing or unavailable Hub authority cannot grant access. get_entitlements read-only organizationId 200 productSession",
+      "summary": "Organization entitlements and usage",
+      "text": "GET /v1/organizations/{organizationId}/entitlements\noperation_id: getEntitlements\nsummary: Organization entitlements and usage\ndescription: Requires the entitlements.read operation on a JackAISaaS product session for this exact organization and environment. In managed-connected mode returns only Hub-sourced flags and quotas, plus observed local usage; no local catalog or Stripe fallback. Missing or unavailable Hub authority cannot grant access.\nsdk_method: get_entitlements\naccess: read-only\nparameters: organizationId (string) [required]\nresponses: 200\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_entitlements(organization_id=...)"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_fleet(organization_id=...)",
+      "id": "operation:getFleet",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "getFleet",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/fleet",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Stored fleet",
+          "status_code": "200"
+        }
+      ],
+      "sdk_method": "get_fleet",
+      "search_text": "getFleet GET /v1/organizations/{organizationId}/fleet Organization fleet view Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Needs the org.fleet entitlement. Members, boxes, policy and usage from storage. get_fleet read-only organizationId 200 productSession",
+      "summary": "Organization fleet view",
+      "text": "GET /v1/organizations/{organizationId}/fleet\noperation_id: getFleet\nsummary: Organization fleet view\ndescription: Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Needs the org.fleet entitlement. Members, boxes, policy and usage from storage.\nsdk_method: get_fleet\naccess: read-only\nparameters: organizationId (string) [required]\nresponses: 200\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_fleet(organization_id=...)"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_fleet_policy(organization_id=...)",
+      "id": "operation:getFleetPolicy",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "getFleetPolicy",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/fleet/policy",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Effective policy",
+          "status_code": "200"
+        }
+      ],
+      "sdk_method": "get_fleet_policy",
+      "search_text": "getFleetPolicy GET /v1/organizations/{organizationId}/fleet/policy Read the fleet policy Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. The policy is the stored one or the documented default (source tells which). get_fleet_policy read-only organizationId 200 productSession",
+      "summary": "Read the fleet policy",
+      "text": "GET /v1/organizations/{organizationId}/fleet/policy\noperation_id: getFleetPolicy\nsummary: Read the fleet policy\ndescription: Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. The policy is the stored one or the documented default (source tells which).\nsdk_method: get_fleet_policy\naccess: read-only\nparameters: organizationId (string) [required]\nresponses: 200\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_fleet_policy(organization_id=...)"
+    },
+    {
+      "access": "read-only",
+      "auth": [],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_health()",
+      "id": "operation:getHealth",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "getHealth",
+      "parameters": [],
+      "path": "/health",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "OK",
+          "status_code": "200"
+        }
+      ],
+      "sdk_method": "get_health",
+      "search_text": "getHealth GET /health Control-plane health, storage readiness and registration mode get_health read-only 200",
+      "summary": "Control-plane health, storage readiness and registration mode",
+      "text": "GET /health\noperation_id: getHealth\nsummary: Control-plane health, storage readiness and registration mode\nsdk_method: get_health\naccess: read-only\nresponses: 200\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_health()"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_hosted_workspace(workspace_id=...)",
+      "id": "operation:getHostedWorkspace",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "getHostedWorkspace",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "workspaceId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/workspaces/{workspaceId}",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Authorized workspace state or result",
+          "status_code": "200"
+        },
+        {
+          "description": "Invalid bounded request",
+          "status_code": "400"
+        },
+        {
+          "description": "Product session rejected",
+          "status_code": "401"
+        },
+        {
+          "description": "Hub entitlement or atomic quota denied",
+          "status_code": "402"
+        },
+        {
+          "description": "Operation or fleet policy denied",
+          "status_code": "403"
+        },
+        {
+          "description": "Resource not found in the authorized tenant and product environment",
+          "status_code": "404"
+        },
+        {
+          "description": "Idempotency conflict, incompatible state or cleanup unconfirmed",
+          "status_code": "409"
+        },
+        {
+          "description": "Operator provider, template, storage or authority unavailable",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "get_hosted_workspace",
+      "search_text": "getHostedWorkspace GET /v1/workspaces/{workspaceId} Read durable workspace state get_hosted_workspace read-only workspaceId 200 400 401 402 403 404 409 503 productSession",
+      "summary": "Read durable workspace state",
+      "text": "GET /v1/workspaces/{workspaceId}\noperation_id: getHostedWorkspace\nsummary: Read durable workspace state\nsdk_method: get_hosted_workspace\naccess: read-only\nparameters: workspaceId (string) [required]\nresponses: 200, 400, 401, 402, 403, 404, 409, 503\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_hosted_workspace(workspace_id=...)"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_hosted_workspace_operation(operation_id=..., workspace_id=...)",
+      "id": "operation:getHostedWorkspaceOperation",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "getHostedWorkspaceOperation",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "workspaceId",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "description": "",
+          "location": "path",
+          "name": "operationId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/workspaces/{workspaceId}/operations/{operationId}",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Authorized workspace state or result",
+          "status_code": "200"
+        },
+        {
+          "description": "Invalid bounded request",
+          "status_code": "400"
+        },
+        {
+          "description": "Product session rejected",
+          "status_code": "401"
+        },
+        {
+          "description": "Hub entitlement or atomic quota denied",
+          "status_code": "402"
+        },
+        {
+          "description": "Operation or fleet policy denied",
+          "status_code": "403"
+        },
+        {
+          "description": "Resource not found in the authorized tenant and product environment",
+          "status_code": "404"
+        },
+        {
+          "description": "Idempotency conflict, incompatible state or cleanup unconfirmed",
+          "status_code": "409"
+        },
+        {
+          "description": "Operator provider, template, storage or authority unavailable",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "get_hosted_workspace_operation",
+      "search_text": "getHostedWorkspaceOperation GET /v1/workspaces/{workspaceId}/operations/{operationId} Read the bounded, redacted durable operation receipt get_hosted_workspace_operation read-only workspaceId operationId 200 400 401 402 403 404 409 503 productSession",
+      "summary": "Read the bounded, redacted durable operation receipt",
+      "text": "GET /v1/workspaces/{workspaceId}/operations/{operationId}\noperation_id: getHostedWorkspaceOperation\nsummary: Read the bounded, redacted durable operation receipt\nsdk_method: get_hosted_workspace_operation\naccess: read-only\nparameters: workspaceId (string) [required], operationId (string) [required]\nresponses: 200, 400, 401, 402, 403, 404, 409, 503\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_hosted_workspace_operation(operation_id=..., workspace_id=...)"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_hosted_workspace_source(workspace_id=...)",
+      "id": "operation:getHostedWorkspaceSource",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "getHostedWorkspaceSource",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "workspaceId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/workspaces/{workspaceId}/source",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Authorized workspace state or result",
+          "status_code": "200"
+        },
+        {
+          "description": "Invalid bounded request",
+          "status_code": "400"
+        },
+        {
+          "description": "Product session rejected",
+          "status_code": "401"
+        },
+        {
+          "description": "Hub entitlement or atomic quota denied",
+          "status_code": "402"
+        },
+        {
+          "description": "Operation or fleet policy denied",
+          "status_code": "403"
+        },
+        {
+          "description": "Resource not found in the authorized tenant and product environment",
+          "status_code": "404"
+        },
+        {
+          "description": "Idempotency conflict, incompatible state or cleanup unconfirmed",
+          "status_code": "409"
+        },
+        {
+          "description": "Operator provider, template, storage or authority unavailable",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "get_hosted_workspace_source",
+      "search_text": "getHostedWorkspaceSource GET /v1/workspaces/{workspaceId}/source Download the private initial source snapshot; unavailable after close or expiry get_hosted_workspace_source read-only workspaceId 200 400 401 402 403 404 409 503 productSession",
+      "summary": "Download the private initial source snapshot; unavailable after close or expiry",
+      "text": "GET /v1/workspaces/{workspaceId}/source\noperation_id: getHostedWorkspaceSource\nsummary: Download the private initial source snapshot; unavailable after close or expiry\nsdk_method: get_hosted_workspace_source\naccess: read-only\nparameters: workspaceId (string) [required]\nresponses: 200, 400, 401, 402, 403, 404, 409, 503\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_hosted_workspace_source(workspace_id=...)"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_job(job_id=...)",
+      "id": "operation:getJob",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "getJob",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "jobId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/jobs/{jobId}",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "OK",
+          "status_code": "200"
+        }
+      ],
+      "sdk_method": "get_job",
+      "search_text": "getJob GET /v1/jobs/{jobId} Get one job in organization scope Requires a JackAISaaS product session. Answers 503 execution_api_unavailable until production storage is configured. get_job read-only jobId 200 productSession",
+      "summary": "Get one job in organization scope",
+      "text": "GET /v1/jobs/{jobId}\noperation_id: getJob\nsummary: Get one job in organization scope\ndescription: Requires a JackAISaaS product session. Answers 503 execution_api_unavailable until production storage is configured.\nsdk_method: get_job\naccess: read-only\nparameters: jobId (string) [required]\nresponses: 200\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_job(job_id=...)"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_persistent_box(box_id=..., organization_id=...)",
+      "id": "operation:getPersistentBox",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "getPersistentBox",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "description": "",
+          "location": "path",
+          "name": "boxId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/persistent-boxes/{boxId}",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Private stored record and reserved budget; runtime status is not-metered.",
+          "status_code": "200"
+        },
+        {
+          "description": "Invalid UUID or query parameters.",
+          "status_code": "400"
+        },
+        {
+          "description": "Missing or rejected product session.",
+          "status_code": "401"
+        },
+        {
+          "description": "Current authority denied access or the organization/product/environment differs.",
+          "status_code": "403"
+        },
+        {
+          "description": "No durable box in this exact target scope.",
+          "status_code": "404"
+        },
+        {
+          "description": "Authority or durable record storage unavailable.",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "get_persistent_box",
+      "search_text": "getPersistentBox GET /v1/organizations/{organizationId}/persistent-boxes/{boxId} Read one hosted durable box record and its latest runtime reservation Requires fresh JackAISaaS boxes.read authorization and exact organization/product/environment ownership. Reads remain available after a paid-feature downgrade. The result is a stored observation with a reserved runtime budget, not measured consumption or provider availability. An uncertain item may include reconciliationOperationId after an exact scoped lifecycle-intention lookup, allowing recovery if the prior mutation response was lost; the collection never includes it. The handle does not confirm dispatch or remove the mutation fence, and POST reconcile still requires boxes.close. No credentials, configuration fingerprints, provider identifiers or deletion receipts are exposed. No query parameters or mutations are accepted. get_persistent_box read-only organizationId boxId 200 400 401 403 404 503 productSession",
+      "summary": "Read one hosted durable box record and its latest runtime reservation",
+      "text": "GET /v1/organizations/{organizationId}/persistent-boxes/{boxId}\noperation_id: getPersistentBox\nsummary: Read one hosted durable box record and its latest runtime reservation\ndescription: Requires fresh JackAISaaS boxes.read authorization and exact organization/product/environment ownership. Reads remain available after a paid-feature downgrade. The result is a stored observation with a reserved runtime budget, not measured consumption or provider availability. An uncertain item may include reconciliationOperationId after an exact scoped lifecycle-intention lookup, allowing recovery if the prior mutation response was lost; the collection never includes it. The handle does not confirm dispatch or remove the mutation fence, and POST reconcile still requires boxes.close. No creden\nsdk_method: get_persistent_box\naccess: read-only\nparameters: organizationId (string) [required], boxId (string) [required]\nresponses: 200, 400, 401, 403, 404, 503\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_persistent_box(box_id=..., organization_id=...)"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_persistent_box_provider_usage(box_id=..., from_=..., organization_id=..., to=...)",
+      "id": "operation:getPersistentBoxProviderUsage",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "getPersistentBoxProviderUsage",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "description": "",
+          "location": "path",
+          "name": "boxId",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "description": "",
+          "location": "query",
+          "name": "from",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "description": "",
+          "location": "query",
+          "name": "to",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/persistent-boxes/{boxId}/usage",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Private provider evidence summary with explicit interval coverage.",
+          "status_code": "200"
+        },
+        {
+          "description": "Invalid box ID or bounded UTC window.",
+          "status_code": "400"
+        },
+        {
+          "description": "Missing or rejected product session.",
+          "status_code": "401"
+        },
+        {
+          "description": "Current authority denied access or target scope differs.",
+          "status_code": "403"
+        },
+        {
+          "description": "No durable box in this exact target scope.",
+          "status_code": "404"
+        },
+        {
+          "description": "Stored evidence exceeds the per-read record bound; select a smaller window.",
+          "status_code": "413"
+        },
+        {
+          "description": "Authority or usage storage unavailable.",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "get_persistent_box_provider_usage",
+      "search_text": "getPersistentBoxProviderUsage GET /v1/organizations/{organizationId}/persistent-boxes/{boxId}/usage Read scoped provider usage evidence for one hosted durable box Requires fresh JackAISaaS boxes.read authority and exact organization/product/environment ownership. from and to are canonical UTC instants, at most 31 days apart and not in the future. The two meters distinguish measured runtime from retained allocated storage. Partial or unknown coverage has null quantity and knownQuantity is only an observed subtotal. No provider receipt, price, billing event or reservation release is exposed. GET and HEAD are private and not cacheable; the /api alias has the same contract. get_persistent_box_provider_usage read-only organizationId boxId from to 200 400 401 403 404 413 503 productSession",
+      "summary": "Read scoped provider usage evidence for one hosted durable box",
+      "text": "GET /v1/organizations/{organizationId}/persistent-boxes/{boxId}/usage\noperation_id: getPersistentBoxProviderUsage\nsummary: Read scoped provider usage evidence for one hosted durable box\ndescription: Requires fresh JackAISaaS boxes.read authority and exact organization/product/environment ownership. from and to are canonical UTC instants, at most 31 days apart and not in the future. The two meters distinguish measured runtime from retained allocated storage. Partial or unknown coverage has null quantity and knownQuantity is only an observed subtotal. No provider receipt, price, billing event or reservation release is exposed. GET and HEAD are private and not cacheable; the /api alias has the same contract.\nsdk_method: get_persistent_box_provider_usage\naccess: read-only\nparameters: organizationId (string) [required], boxId (string) [required], from (string) [required], to (string) [required]\nresponses: 200, 400, 401, 403, 404, 413, 503\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_persistent_box_provider_usage(box_id=..., from_=..., organization_id=..., to=...)"
+    },
+    {
+      "access": "read-only",
+      "auth": [],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_plans()",
+      "id": "operation:getPlans",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "getPlans",
+      "parameters": [],
+      "path": "/v1/plans",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "OK",
+          "status_code": "200"
+        },
+        {
+          "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl.",
+          "status_code": "409"
+        }
+      ],
+      "sdk_method": "get_plans",
+      "search_text": "getPlans GET /v1/plans Public plan catalog status In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. get_plans read-only 200 409",
+      "summary": "Public plan catalog status",
+      "text": "GET /v1/plans\noperation_id: getPlans\nsummary: Public plan catalog status\ndescription: In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode.\nsdk_method: get_plans\naccess: read-only\nresponses: 200, 409\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.get_plans()"
+    },
+    {
+      "access": "write",
+      "auth": [
+        {
+          "name": "licenseToken",
+          "type": "apiKey"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.ingest_telemetry(body=...)",
+      "id": "operation:ingestTelemetry",
+      "kind": "operation",
+      "method": "POST",
+      "operation_id": "ingestTelemetry",
+      "parameters": [],
+      "path": "/v1/telemetry/ingest",
+      "request_media": [
+        "application/json"
+      ],
+      "responses": [
+        {
+          "description": "Stored",
+          "status_code": "201"
+        },
+        {
+          "description": "Invalid event",
+          "status_code": "400"
+        },
+        {
+          "description": "License required",
+          "status_code": "401"
+        },
+        {
+          "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl.",
+          "status_code": "409"
+        },
+        {
+          "description": "Body too large",
+          "status_code": "413"
+        },
+        {
+          "description": "Ingestion not configured",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "ingest_telemetry",
+      "search_text": "ingestTelemetry POST /v1/telemetry/ingest Opt-in usage event (allowlisted fields only, 8 KiB limit) In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. ingest_telemetry write 201 400 401 409 413 503 licenseToken",
+      "summary": "Opt-in usage event (allowlisted fields only, 8 KiB limit)",
+      "text": "POST /v1/telemetry/ingest\noperation_id: ingestTelemetry\nsummary: Opt-in usage event (allowlisted fields only, 8 KiB limit)\ndescription: In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode.\nsdk_method: ingest_telemetry\naccess: write\nrequest: application/json\nresponses: 201, 400, 401, 409, 413, 503\nauth: licenseToken\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.ingest_telemetry(body=...)"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.list_boxes(organization_id=...)",
+      "id": "operation:listBoxes",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "listBoxes",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/boxes",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Stored boxes with their provider state",
+          "status_code": "200"
+        }
+      ],
+      "sdk_method": "list_boxes",
+      "search_text": "listBoxes GET /v1/organizations/{organizationId}/boxes List hosted boxes Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Needs the org.boxes entitlement. list_boxes read-only organizationId 200 productSession",
+      "summary": "List hosted boxes",
+      "text": "GET /v1/organizations/{organizationId}/boxes\noperation_id: listBoxes\nsummary: List hosted boxes\ndescription: Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Needs the org.boxes entitlement.\nsdk_method: list_boxes\naccess: read-only\nparameters: organizationId (string) [required]\nresponses: 200\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.list_boxes(organization_id=...)"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.list_hosted_workspaces()",
+      "id": "operation:listHostedWorkspaces",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "listHostedWorkspaces",
+      "parameters": [],
+      "path": "/v1/workspaces",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Authorized workspace state or result",
+          "status_code": "200"
+        },
+        {
+          "description": "Invalid bounded request",
+          "status_code": "400"
+        },
+        {
+          "description": "Product session rejected",
+          "status_code": "401"
+        },
+        {
+          "description": "Hub entitlement or atomic quota denied",
+          "status_code": "402"
+        },
+        {
+          "description": "Operation or fleet policy denied",
+          "status_code": "403"
+        },
+        {
+          "description": "Resource not found in the authorized tenant and product environment",
+          "status_code": "404"
+        },
+        {
+          "description": "Idempotency conflict, incompatible state or cleanup unconfirmed",
+          "status_code": "409"
+        },
+        {
+          "description": "Operator provider, template, storage or authority unavailable",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "list_hosted_workspaces",
+      "search_text": "listHostedWorkspaces GET /v1/workspaces List workspaces owned by the authorized tenant and product environment list_hosted_workspaces read-only 200 400 401 402 403 404 409 503 productSession",
+      "summary": "List workspaces owned by the authorized tenant and product environment",
+      "text": "GET /v1/workspaces\noperation_id: listHostedWorkspaces\nsummary: List workspaces owned by the authorized tenant and product environment\nsdk_method: list_hosted_workspaces\naccess: read-only\nresponses: 200, 400, 401, 402, 403, 404, 409, 503\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.list_hosted_workspaces()"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.list_invoices(organization_id=...)",
+      "id": "operation:listInvoices",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "listInvoices",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/billing/invoices",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Invoices",
+          "status_code": "200"
+        },
+        {
+          "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl.",
+          "status_code": "409"
+        }
+      ],
+      "sdk_method": "list_invoices",
+      "search_text": "listInvoices GET /v1/organizations/{organizationId}/billing/invoices List the organization's invoices In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Stripe test mode only (docs/BILLING.md); 503 billing_unavailable without a test key. Only the organization's own Stripe invoices (hosted page and PDF links). list_invoices read-only organizationId 200 409 productSession",
+      "summary": "List the organization's invoices",
+      "text": "GET /v1/organizations/{organizationId}/billing/invoices\noperation_id: listInvoices\nsummary: List the organization's invoices\ndescription: In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Stripe test mode only (docs/BILLING.md); 503 billing_unavailable without a test key. Only the organization's own Stripe invoices (hosted page and PDF links).\nsdk_method: list_invoices\naccess: read-only\nparameters: organizationId (string) [required]\nresponses: 200, 409\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.list_invoices(organization_id=...)"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.list_job_events(job_id=...)",
+      "id": "operation:listJobEvents",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "listJobEvents",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "jobId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/jobs/{jobId}/events",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "OK",
+          "status_code": "200"
+        }
+      ],
+      "sdk_method": "list_job_events",
+      "search_text": "listJobEvents GET /v1/jobs/{jobId}/events List job events Requires a JackAISaaS product session. Answers 503 execution_api_unavailable until production storage is configured. list_job_events read-only jobId 200 productSession",
+      "summary": "List job events",
+      "text": "GET /v1/jobs/{jobId}/events\noperation_id: listJobEvents\nsummary: List job events\ndescription: Requires a JackAISaaS product session. Answers 503 execution_api_unavailable until production storage is configured.\nsdk_method: list_job_events\naccess: read-only\nparameters: jobId (string) [required]\nresponses: 200\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.list_job_events(job_id=...)"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.list_jobs()",
+      "id": "operation:listJobs",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "listJobs",
+      "parameters": [],
+      "path": "/v1/jobs",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Jobs",
+          "status_code": "200"
+        },
+        {
+          "description": "Session required",
+          "status_code": "401"
+        },
+        {
+          "description": "Storage not configured",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "list_jobs",
+      "search_text": "listJobs GET /v1/jobs List the organization jobs Requires a JackAISaaS product session. Answers 503 execution_api_unavailable until production storage is configured. list_jobs read-only 200 401 503 productSession",
+      "summary": "List the organization jobs",
+      "text": "GET /v1/jobs\noperation_id: listJobs\nsummary: List the organization jobs\ndescription: Requires a JackAISaaS product session. Answers 503 execution_api_unavailable until production storage is configured.\nsdk_method: list_jobs\naccess: read-only\nresponses: 200, 401, 503\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.list_jobs()"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.list_members(organization_id=...)",
+      "id": "operation:listMembers",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "listMembers",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/members",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Stored members and the plan seat limit",
+          "status_code": "200"
+        }
+      ],
+      "sdk_method": "list_members",
+      "search_text": "listMembers GET /v1/organizations/{organizationId}/members List organization members Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Needs the org.members entitlement. In managed-connected mode these local records are historical, with authoritative:false and authority:local-history; they do not grant account roles or entitlements. list_members read-only organizationId 200 productSession",
+      "summary": "List organization members",
+      "text": "GET /v1/organizations/{organizationId}/members\noperation_id: listMembers\nsummary: List organization members\ndescription: Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Needs the org.members entitlement. In managed-connected mode these local records are historical, with authoritative:false and authority:local-history; they do not grant account roles or entitlements.\nsdk_method: list_members\naccess: read-only\nparameters: organizationId (string) [required]\nresponses: 200\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.list_members(organization_id=...)"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.list_observed_boxes(organization_id=...)",
+      "id": "operation:listObservedBoxes",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "listObservedBoxes",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/observed-boxes",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Up to 100 non-expired client snapshots, private and not cacheable.",
+          "status_code": "200"
+        },
+        {
+          "description": "No valid product session.",
+          "status_code": "401"
+        },
+        {
+          "description": "Organization or scope denied.",
+          "status_code": "403"
+        },
+        {
+          "description": "Inventory storage unavailable.",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "list_observed_boxes",
+      "search_text": "listObservedBoxes GET /v1/organizations/{organizationId}/observed-boxes List client-reported local and provider box snapshots Requires current boxes.read product-session authorization for this exact organization. These are time-limited client reports, separate from hosted provider authority, billable usage and current Hub membership. No query parameters are accepted. list_observed_boxes read-only organizationId 200 401 403 503 productSession",
+      "summary": "List client-reported local and provider box snapshots",
+      "text": "GET /v1/organizations/{organizationId}/observed-boxes\noperation_id: listObservedBoxes\nsummary: List client-reported local and provider box snapshots\ndescription: Requires current boxes.read product-session authorization for this exact organization. These are time-limited client reports, separate from hosted provider authority, billable usage and current Hub membership. No query parameters are accepted.\nsdk_method: list_observed_boxes\naccess: read-only\nparameters: organizationId (string) [required]\nresponses: 200, 401, 403, 503\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.list_observed_boxes(organization_id=...)"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.list_persistent_box_offers(organization_id=...)",
+      "id": "operation:listPersistentBoxOffers",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "listPersistentBoxOffers",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/persistent-boxes/offers",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Private configured offers.",
+          "status_code": "200"
+        },
+        {
+          "description": "Product session required.",
+          "status_code": "401"
+        },
+        {
+          "description": "Current read authority denied.",
+          "status_code": "403"
+        },
+        {
+          "description": "Storage or operator offer configuration unavailable.",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "list_persistent_box_offers",
+      "search_text": "listPersistentBoxOffers GET /v1/organizations/{organizationId}/persistent-boxes/offers List operator-installed durable offers Fresh boxes.read authorization is required. Returns configured offer IDs, provider names, templates and allocated storage. This is not a provider account probe or live capacity promise. No query parameters are accepted. Credentials and routing fingerprints stay private. list_persistent_box_offers read-only organizationId 200 401 403 503 productSession",
+      "summary": "List operator-installed durable offers",
+      "text": "GET /v1/organizations/{organizationId}/persistent-boxes/offers\noperation_id: listPersistentBoxOffers\nsummary: List operator-installed durable offers\ndescription: Fresh boxes.read authorization is required. Returns configured offer IDs, provider names, templates and allocated storage. This is not a provider account probe or live capacity promise. No query parameters are accepted. Credentials and routing fingerprints stay private.\nsdk_method: list_persistent_box_offers\naccess: read-only\nparameters: organizationId (string) [required]\nresponses: 200, 401, 403, 503\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.list_persistent_box_offers(organization_id=...)"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.list_persistent_boxes(limit=..., organization_id=...)",
+      "id": "operation:listPersistentBoxes",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "listPersistentBoxes",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "description": "Maximum recent records; duplicates and other query parameters are rejected.",
+          "location": "query",
+          "name": "limit",
+          "required": false,
+          "type": "integer"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/persistent-boxes",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Bounded stored records, private and not cacheable. limitReached indicates the requested bound was filled, not an exact total or proof that more records exist.",
+          "status_code": "200"
+        },
+        {
+          "description": "Invalid query parameters.",
+          "status_code": "400"
+        },
+        {
+          "description": "Missing or rejected product session.",
+          "status_code": "401"
+        },
+        {
+          "description": "Current authority denied access or the organization/product/environment differs.",
+          "status_code": "403"
+        },
+        {
+          "description": "Authority or durable record storage unavailable.",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "list_persistent_boxes",
+      "search_text": "listPersistentBoxes GET /v1/organizations/{organizationId}/persistent-boxes Read recent hosted durable box records Requires fresh JackAISaaS boxes.read authorization for this exact organization, product and deployment environment. No paid-feature entitlement is required for these reads. Returns recent stored records only, with no provider call, provisioning or billing. Configuration fingerprints, provider identifiers, receipts and access credentials are omitted. Runtime remains not-metered. HEAD and the /api alias have the same authorization. list_persistent_boxes read-only organizationId limit Maximum recent records; duplicates and other query parameters are rejected. 200 400 401 403 503 productSession",
+      "summary": "Read recent hosted durable box records",
+      "text": "GET /v1/organizations/{organizationId}/persistent-boxes\noperation_id: listPersistentBoxes\nsummary: Read recent hosted durable box records\ndescription: Requires fresh JackAISaaS boxes.read authorization for this exact organization, product and deployment environment. No paid-feature entitlement is required for these reads. Returns recent stored records only, with no provider call, provisioning or billing. Configuration fingerprints, provider identifiers, receipts and access credentials are omitted. Runtime remains not-metered. HEAD and the /api alias have the same authorization.\nsdk_method: list_persistent_boxes\naccess: read-only\nparameters: organizationId (string) [required], limit (integer)\nresponses: 200, 400, 401, 403, 503\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.list_persistent_boxes(limit=..., organization_id=...)"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "adminToken",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.list_users()",
+      "id": "operation:listUsers",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "listUsers",
+      "parameters": [],
+      "path": "/v1/admin/users",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Users",
+          "status_code": "200"
+        },
+        {
+          "description": "Admin token required",
+          "status_code": "401"
+        }
+      ],
+      "sdk_method": "list_users",
+      "search_text": "listUsers GET /v1/admin/users List registered and revoked users In managed-connected mode these local records are historical, with authoritative:false and authority:local-history; they do not grant account roles or entitlements. list_users read-only 200 401 adminToken",
+      "summary": "List registered and revoked users",
+      "text": "GET /v1/admin/users\noperation_id: listUsers\nsummary: List registered and revoked users\ndescription: In managed-connected mode these local records are historical, with authoritative:false and authority:local-history; they do not grant account roles or entitlements.\nsdk_method: list_users\naccess: read-only\nresponses: 200, 401\nauth: adminToken\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.list_users()"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "adminToken",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.list_waitlist()",
+      "id": "operation:listWaitlist",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "listWaitlist",
+      "parameters": [],
+      "path": "/v1/waitlist",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Requests",
+          "status_code": "200"
+        },
+        {
+          "description": "Admin token required",
+          "status_code": "401"
+        }
+      ],
+      "sdk_method": "list_waitlist",
+      "search_text": "listWaitlist GET /v1/waitlist Export access requests as JSON or CSV (?format=csv) list_waitlist read-only 200 401 adminToken",
+      "summary": "Export access requests as JSON or CSV (?format=csv)",
+      "text": "GET /v1/waitlist\noperation_id: listWaitlist\nsummary: Export access requests as JSON or CSV (?format=csv)\nsdk_method: list_waitlist\naccess: read-only\nresponses: 200, 401\nauth: adminToken\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.list_waitlist()"
+    },
+    {
+      "access": "write",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.open_hosted_workspace(body=..., idempotency_key_2=...)",
+      "id": "operation:openHostedWorkspace",
+      "kind": "operation",
+      "method": "POST",
+      "operation_id": "openHostedWorkspace",
+      "parameters": [
+        {
+          "description": "Required here or in the idempotencyKey body field. Replays never allocate or execute again.",
+          "location": "header",
+          "name": "Idempotency-Key",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/workspaces",
+      "request_media": [
+        "application/json"
+      ],
+      "responses": [
+        {
+          "description": "Authorized workspace state or result",
+          "status_code": "200"
+        },
+        {
+          "description": "Prepared workspace; source and provider allocation recorded durably",
+          "status_code": "201"
+        },
+        {
+          "description": "Invalid bounded request",
+          "status_code": "400"
+        },
+        {
+          "description": "Product session rejected",
+          "status_code": "401"
+        },
+        {
+          "description": "Hub entitlement or atomic quota denied",
+          "status_code": "402"
+        },
+        {
+          "description": "Operation or fleet policy denied",
+          "status_code": "403"
+        },
+        {
+          "description": "Resource not found in the authorized tenant and product environment",
+          "status_code": "404"
+        },
+        {
+          "description": "Idempotency conflict, incompatible state or cleanup unconfirmed",
+          "status_code": "409"
+        },
+        {
+          "description": "Operator provider, template, storage or authority unavailable",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "open_hosted_workspace",
+      "search_text": "openHostedWorkspace POST /v1/workspaces Open a finite hosted workspace under Hub rights, fleet policy and shared quotas open_hosted_workspace write Idempotency-Key Required here or in the idempotencyKey body field. Replays never allocate or execute again. files idempotencyKey template timeoutSeconds 200 201 400 401 402 403 404 409 503 productSession",
+      "summary": "Open a finite hosted workspace under Hub rights, fleet policy and shared quotas",
+      "text": "POST /v1/workspaces\noperation_id: openHostedWorkspace\nsummary: Open a finite hosted workspace under Hub rights, fleet policy and shared quotas\nsdk_method: open_hosted_workspace\naccess: write\nparameters: Idempotency-Key (string)\nrequest: application/json\nresponses: 200, 201, 400, 401, 402, 403, 404, 409, 503\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.open_hosted_workspace(body=..., idempotency_key_2=...)"
+    },
+    {
+      "access": "write",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.provision_persistent_box(body=..., idempotency_key_2=..., organization_id=...)",
+      "id": "operation:provisionPersistentBox",
+      "kind": "operation",
+      "method": "POST",
+      "operation_id": "provisionPersistentBox",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "description": "",
+          "location": "header",
+          "name": "Idempotency-Key",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/persistent-boxes",
+      "request_media": [
+        "application/json"
+      ],
+      "responses": [
+        {
+          "description": "Previously recorded running or closed allocation; replayed is true.",
+          "status_code": "200"
+        },
+        {
+          "description": "Provider allocation confirmed and recorded as running. Runtime remains reserved, not measured.",
+          "status_code": "201"
+        },
+        {
+          "description": "The reservation is held and the allocation remains unconfirmed. Repeated requests never dispatch create again; operator reconciliation is required.",
+          "status_code": "202"
+        },
+        {
+          "description": "Invalid body, unsupported fields, query parameters or idempotency key.",
+          "status_code": "400"
+        },
+        {
+          "description": "Missing or rejected product session.",
+          "status_code": "401"
+        },
+        {
+          "description": "Missing durable entitlement, bounded allowance or available capacity.",
+          "status_code": "402"
+        },
+        {
+          "description": "Current authority denied the operation or target scope.",
+          "status_code": "403"
+        },
+        {
+          "description": "Idempotency conflict, unresolved prior budget or UTC month boundary.",
+          "status_code": "409"
+        },
+        {
+          "description": "Request body exceeds 4 KiB.",
+          "status_code": "413"
+        },
+        {
+          "description": "Authority, storage, operator offer or independent runtime enforcement unavailable. Missing configuration is refused before reservation.",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "provision_persistent_box",
+      "search_text": "provisionPersistentBox POST /v1/organizations/{organizationId}/persistent-boxes Provision a durable box from a configured operator offer Requires current JackAISaaS boxes.persistent.write authorization, org.boxes and org.persistent-boxes, and explicit bounded shared/durable allowances. The operator pins the provider, template and allocated storage. Runtime enforcement must be independently armed and recorded before allocation. An idempotency key is required in the header or body; if both are supplied they must match. A committed reservation dispatches create at most once; subsequent requests only observe it, including after server restart or a lost response. Minutes remain reserved and not-metered. No query parameters are accepted. Responses are private and not cacheable. The /api alias has the same contract. No production provider or runtime enforcer is configured by default. provision_persistent_box write organizationId Idempotency-Key idempotencyKey offer reserveMinutes 200 201 202 400 401 402 403 409 413 503 productSession",
+      "summary": "Provision a durable box from a configured operator offer",
+      "text": "POST /v1/organizations/{organizationId}/persistent-boxes\noperation_id: provisionPersistentBox\nsummary: Provision a durable box from a configured operator offer\ndescription: Requires current JackAISaaS boxes.persistent.write authorization, org.boxes and org.persistent-boxes, and explicit bounded shared/durable allowances. The operator pins the provider, template and allocated storage. Runtime enforcement must be independently armed and recorded before allocation. An idempotency key is required in the header or body; if both are supplied they must match. A committed reservation dispatches create at most once; subsequent requests only observe it, including after server restart or a lost response. Minutes remain reserved and not-metered. No query parameters are accep\nsdk_method: provision_persistent_box\naccess: write\nparameters: organizationId (string) [required], Idempotency-Key (string)\nrequest: application/json\nresponses: 200, 201, 202, 400, 401, 402, 403, 409, 413, 503\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.provision_persistent_box(body=..., idempotency_key_2=..., organization_id=...)"
+    },
+    {
+      "access": "write",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.put_fleet_policy(body=..., organization_id=...)",
+      "id": "operation:putFleetPolicy",
+      "kind": "operation",
+      "method": "PUT",
+      "operation_id": "putFleetPolicy",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/fleet/policy",
+      "request_media": [
+        "application/json"
+      ],
+      "responses": [
+        {
+          "description": "Stored policy",
+          "status_code": "200"
+        },
+        {
+          "description": "Invalid or unenforced field",
+          "status_code": "400"
+        }
+      ],
+      "sdk_method": "put_fleet_policy",
+      "search_text": "putFleetPolicy PUT /v1/organizations/{organizationId}/fleet/policy Update the fleet policy Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Only rules the control plane enforces are accepted; unknown fields answer 400. put_fleet_policy write organizationId allowedProviders allowedTemplates maxBoxLifetimeSeconds 200 400 productSession",
+      "summary": "Update the fleet policy",
+      "text": "PUT /v1/organizations/{organizationId}/fleet/policy\noperation_id: putFleetPolicy\nsummary: Update the fleet policy\ndescription: Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Only rules the control plane enforces are accepted; unknown fields answer 400.\nsdk_method: put_fleet_policy\naccess: write\nparameters: organizationId (string) [required]\nrequest: application/json\nresponses: 200, 400\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.put_fleet_policy(body=..., organization_id=...)"
+    },
+    {
+      "access": "read-only",
+      "auth": [
+        {
+          "name": "adminToken",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.read_telemetry()",
+      "id": "operation:readTelemetry",
+      "kind": "operation",
+      "method": "GET",
+      "operation_id": "readTelemetry",
+      "parameters": [],
+      "path": "/v1/admin/telemetry",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Events",
+          "status_code": "200"
+        },
+        {
+          "description": "Admin token required",
+          "status_code": "401"
+        }
+      ],
+      "sdk_method": "read_telemetry",
+      "search_text": "readTelemetry GET /v1/admin/telemetry Read opt-in telemetry events read_telemetry read-only 200 401 adminToken",
+      "summary": "Read opt-in telemetry events",
+      "text": "GET /v1/admin/telemetry\noperation_id: readTelemetry\nsummary: Read opt-in telemetry events\nsdk_method: read_telemetry\naccess: read-only\nresponses: 200, 401\nauth: adminToken\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.read_telemetry()"
+    },
+    {
+      "access": "write",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.reconcile_persistent_box(body=..., box_id=..., organization_id=...)",
+      "id": "operation:reconcilePersistentBox",
+      "kind": "operation",
+      "method": "POST",
+      "operation_id": "reconcilePersistentBox",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "description": "",
+          "location": "path",
+          "name": "boxId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/persistent-boxes/{boxId}/reconcile",
+      "request_media": [
+        "application/json"
+      ],
+      "responses": [
+        {
+          "description": "Confirmed operation or replayed receipt.",
+          "status_code": "200"
+        },
+        {
+          "description": "Operation remains unconfirmed; reconcile its operation ID without repeating the mutation.",
+          "status_code": "202"
+        },
+        {
+          "description": "Invalid bounded lifecycle request.",
+          "status_code": "400"
+        },
+        {
+          "description": "Product session required.",
+          "status_code": "401"
+        },
+        {
+          "description": "Durable feature or quota denied.",
+          "status_code": "402"
+        },
+        {
+          "description": "Fresh operation authority denied.",
+          "status_code": "403"
+        },
+        {
+          "description": "Box or operation missing in the exact organization and deployment.",
+          "status_code": "404"
+        },
+        {
+          "description": "Conflicting operation, unresolved evidence or unavailable runtime budget.",
+          "status_code": "409"
+        },
+        {
+          "description": "Authority, storage or matching operator adapter unavailable.",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "reconcile_persistent_box",
+      "search_text": "reconcilePersistentBox POST /v1/organizations/{organizationId}/persistent-boxes/{boxId}/reconcile Reconcile a retained hosted box Requires fresh boxes.close authority. Observes the recorded operation without replaying a provider mutation. Only matching ownership, storage and target state can resolve uncertainty. No query parameters are accepted. Mutations commit an intention before dispatch and dispatch at most once. Lost or late results remain unconfirmed. Responses contain stored observations and reserved, not measured, runtime. reconcile_persistent_box write organizationId boxId operationId 200 202 400 401 402 403 404 409 503 productSession",
+      "summary": "Reconcile a retained hosted box",
+      "text": "POST /v1/organizations/{organizationId}/persistent-boxes/{boxId}/reconcile\noperation_id: reconcilePersistentBox\nsummary: Reconcile a retained hosted box\ndescription: Requires fresh boxes.close authority. Observes the recorded operation without replaying a provider mutation. Only matching ownership, storage and target state can resolve uncertainty. No query parameters are accepted. Mutations commit an intention before dispatch and dispatch at most once. Lost or late results remain unconfirmed. Responses contain stored observations and reserved, not measured, runtime.\nsdk_method: reconcile_persistent_box\naccess: write\nparameters: organizationId (string) [required], boxId (string) [required]\nrequest: application/json\nresponses: 200, 202, 400, 401, 402, 403, 404, 409, 503\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.reconcile_persistent_box(body=..., box_id=..., organization_id=...)"
+    },
+    {
+      "access": "write",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.recover_hosted_workspace(body=..., workspace_id=...)",
+      "id": "operation:recoverHostedWorkspace",
+      "kind": "operation",
+      "method": "POST",
+      "operation_id": "recoverHostedWorkspace",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "workspaceId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/workspaces/{workspaceId}/recover",
+      "request_media": [
+        "application/json"
+      ],
+      "responses": [
+        {
+          "description": "Authorized workspace state or result",
+          "status_code": "200"
+        },
+        {
+          "description": "No verified terminal receipt yet; workspace remains unavailable for new commands",
+          "status_code": "202"
+        },
+        {
+          "description": "Invalid bounded request",
+          "status_code": "400"
+        },
+        {
+          "description": "Product session rejected",
+          "status_code": "401"
+        },
+        {
+          "description": "Hub entitlement or atomic quota denied",
+          "status_code": "402"
+        },
+        {
+          "description": "Operation or fleet policy denied",
+          "status_code": "403"
+        },
+        {
+          "description": "Resource not found in the authorized tenant and product environment",
+          "status_code": "404"
+        },
+        {
+          "description": "Idempotency conflict, incompatible state or cleanup unconfirmed",
+          "status_code": "409"
+        },
+        {
+          "description": "Operator provider, template, storage or authority unavailable",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "recover_hosted_workspace",
+      "search_text": "recoverHostedWorkspace POST /v1/workspaces/{workspaceId}/recover Inspect a protected guest receipt without executing the command again recover_hosted_workspace write workspaceId operationId 200 202 400 401 402 403 404 409 503 productSession",
+      "summary": "Inspect a protected guest receipt without executing the command again",
+      "text": "POST /v1/workspaces/{workspaceId}/recover\noperation_id: recoverHostedWorkspace\nsummary: Inspect a protected guest receipt without executing the command again\nsdk_method: recover_hosted_workspace\naccess: write\nparameters: workspaceId (string) [required]\nrequest: application/json\nresponses: 200, 202, 400, 401, 402, 403, 404, 409, 503\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.recover_hosted_workspace(body=..., workspace_id=...)"
+    },
+    {
+      "access": "write",
+      "auth": [],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.register(body=...)",
+      "id": "operation:register",
+      "kind": "operation",
+      "method": "POST",
+      "operation_id": "register",
+      "parameters": [],
+      "path": "/v1/auth/register",
+      "request_media": [
+        "application/json"
+      ],
+      "responses": [
+        {
+          "description": "License issued",
+          "status_code": "201"
+        },
+        {
+          "description": "Verification code sent (or withheld by the resend cooldown)",
+          "status_code": "202"
+        },
+        {
+          "description": "Invalid or expired code",
+          "status_code": "400"
+        },
+        {
+          "description": "Not invited or refused",
+          "status_code": "403"
+        },
+        {
+          "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl.",
+          "status_code": "409"
+        },
+        {
+          "description": "Rate limited",
+          "status_code": "429"
+        },
+        {
+          "description": "Registration not configured",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "register",
+      "search_text": "register POST /v1/auth/register Invite-only registration with email proof: without \"code\" a 6-digit code is emailed; with the code a license is issued In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. register write 201 202 400 403 409 429 503",
+      "summary": "Invite-only registration with email proof: without \"code\" a 6-digit code is emailed; with the code a license is issued",
+      "text": "POST /v1/auth/register\noperation_id: register\nsummary: Invite-only registration with email proof: without \"code\" a 6-digit code is emailed; with the code a license is issued\ndescription: In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode.\nsdk_method: register\naccess: write\nrequest: application/json\nresponses: 201, 202, 400, 403, 409, 429, 503\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.register(body=...)"
+    },
+    {
+      "access": "write",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.remove_member(organization_id=..., user_id=...)",
+      "id": "operation:removeMember",
+      "kind": "operation",
+      "method": "DELETE",
+      "operation_id": "removeMember",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "description": "",
+          "location": "path",
+          "name": "userId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/members/{userId}",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Removed",
+          "status_code": "200"
+        },
+        {
+          "description": "Unknown member",
+          "status_code": "404"
+        },
+        {
+          "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl.",
+          "status_code": "409"
+        }
+      ],
+      "sdk_method": "remove_member",
+      "search_text": "removeMember DELETE /v1/organizations/{organizationId}/members/{userId} Remove a member In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. remove_member write organizationId userId 200 404 409 productSession",
+      "summary": "Remove a member",
+      "text": "DELETE /v1/organizations/{organizationId}/members/{userId}\noperation_id: removeMember\nsummary: Remove a member\ndescription: In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured.\nsdk_method: remove_member\naccess: write\nparameters: organizationId (string) [required], userId (string) [required]\nresponses: 200, 404, 409\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.remove_member(organization_id=..., user_id=...)"
+    },
+    {
+      "access": "write",
+      "auth": [],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.request_access(body=...)",
+      "id": "operation:requestAccess",
+      "kind": "operation",
+      "method": "POST",
+      "operation_id": "requestAccess",
+      "parameters": [],
+      "path": "/v1/waitlist",
+      "request_media": [
+        "application/json"
+      ],
+      "responses": [
+        {
+          "description": "Received",
+          "status_code": "202"
+        },
+        {
+          "description": "Invalid email",
+          "status_code": "400"
+        },
+        {
+          "description": "Body too large",
+          "status_code": "413"
+        },
+        {
+          "description": "Rate limited",
+          "status_code": "429"
+        }
+      ],
+      "sdk_method": "request_access",
+      "search_text": "requestAccess POST /v1/waitlist Request beta access; one uniform answer, existing entries are never overwritten request_access write 202 400 413 429",
+      "summary": "Request beta access; one uniform answer, existing entries are never overwritten",
+      "text": "POST /v1/waitlist\noperation_id: requestAccess\nsummary: Request beta access; one uniform answer, existing entries are never overwritten\nsdk_method: request_access\naccess: write\nrequest: application/json\nresponses: 202, 400, 413, 429\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.request_access(body=...)"
+    },
+    {
+      "access": "write",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.run_hosted_workspace(body=..., idempotency_key_2=..., workspace_id=...)",
+      "id": "operation:runHostedWorkspace",
+      "kind": "operation",
+      "method": "POST",
+      "operation_id": "runHostedWorkspace",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "workspaceId",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "description": "Required here or in the idempotencyKey body field. Replays never allocate or execute again.",
+          "location": "header",
+          "name": "Idempotency-Key",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/workspaces/{workspaceId}/run",
+      "request_media": [
+        "application/json"
+      ],
+      "responses": [
+        {
+          "description": "Authorized workspace state or result",
+          "status_code": "200"
+        },
+        {
+          "description": "Running or uncertain operation; inspect or explicitly recover, never resend with a new key",
+          "status_code": "202"
+        },
+        {
+          "description": "Invalid bounded request",
+          "status_code": "400"
+        },
+        {
+          "description": "Product session rejected",
+          "status_code": "401"
+        },
+        {
+          "description": "Hub entitlement or atomic quota denied",
+          "status_code": "402"
+        },
+        {
+          "description": "Operation or fleet policy denied",
+          "status_code": "403"
+        },
+        {
+          "description": "Resource not found in the authorized tenant and product environment",
+          "status_code": "404"
+        },
+        {
+          "description": "Idempotency conflict, incompatible state or cleanup unconfirmed",
+          "status_code": "409"
+        },
+        {
+          "description": "Operator provider, template, storage or authority unavailable",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "run_hosted_workspace",
+      "search_text": "runHostedWorkspace POST /v1/workspaces/{workspaceId}/run Execute once in the retained guest directory; ambiguous execution remains uncertain run_hosted_workspace write workspaceId Idempotency-Key Required here or in the idempotencyKey body field. Replays never allocate or execute again. command idempotencyKey timeoutSeconds 200 202 400 401 402 403 404 409 503 productSession",
+      "summary": "Execute once in the retained guest directory; ambiguous execution remains uncertain",
+      "text": "POST /v1/workspaces/{workspaceId}/run\noperation_id: runHostedWorkspace\nsummary: Execute once in the retained guest directory; ambiguous execution remains uncertain\nsdk_method: run_hosted_workspace\naccess: write\nparameters: workspaceId (string) [required], Idempotency-Key (string)\nrequest: application/json\nresponses: 200, 202, 400, 401, 402, 403, 404, 409, 503\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.run_hosted_workspace(body=..., idempotency_key_2=..., workspace_id=...)"
+    },
+    {
+      "access": "write",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.start_persistent_box(body=..., box_id=..., idempotency_key_2=..., organization_id=...)",
+      "id": "operation:startPersistentBox",
+      "kind": "operation",
+      "method": "POST",
+      "operation_id": "startPersistentBox",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "description": "",
+          "location": "path",
+          "name": "boxId",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "description": "",
+          "location": "header",
+          "name": "Idempotency-Key",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/persistent-boxes/{boxId}/start",
+      "request_media": [
+        "application/json"
+      ],
+      "responses": [
+        {
+          "description": "Confirmed operation or replayed receipt.",
+          "status_code": "200"
+        },
+        {
+          "description": "Operation remains unconfirmed; reconcile its operation ID without repeating the mutation.",
+          "status_code": "202"
+        },
+        {
+          "description": "Invalid bounded lifecycle request.",
+          "status_code": "400"
+        },
+        {
+          "description": "Product session required.",
+          "status_code": "401"
+        },
+        {
+          "description": "Durable feature or quota denied.",
+          "status_code": "402"
+        },
+        {
+          "description": "Fresh operation authority denied.",
+          "status_code": "403"
+        },
+        {
+          "description": "Box or operation missing in the exact organization and deployment.",
+          "status_code": "404"
+        },
+        {
+          "description": "Conflicting operation, unresolved evidence or unavailable runtime budget.",
+          "status_code": "409"
+        },
+        {
+          "description": "Authority, storage or matching operator adapter unavailable.",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "start_persistent_box",
+      "search_text": "startPersistentBox POST /v1/organizations/{organizationId}/persistent-boxes/{boxId}/start Start a retained hosted box Requires fresh JackAISaaS boxes.persistent.write authority and positive durable/shared quotas. A confirmed stop is required. Reserves additional monthly runtime and arms independent enforcement before starting the pinned allocation. Retained storage stays reserved. No query parameters are accepted. Mutations commit an intention before dispatch and dispatch at most once. Lost or late results remain unconfirmed. Responses contain stored observations and reserved, not measured, runtime. An idempotency key is required in the header or body; both must match when supplied together. start_persistent_box write organizationId boxId Idempotency-Key idempotencyKey reserveMinutes 200 202 400 401 402 403 404 409 503 productSession",
+      "summary": "Start a retained hosted box",
+      "text": "POST /v1/organizations/{organizationId}/persistent-boxes/{boxId}/start\noperation_id: startPersistentBox\nsummary: Start a retained hosted box\ndescription: Requires fresh JackAISaaS boxes.persistent.write authority and positive durable/shared quotas. A confirmed stop is required. Reserves additional monthly runtime and arms independent enforcement before starting the pinned allocation. Retained storage stays reserved. No query parameters are accepted. Mutations commit an intention before dispatch and dispatch at most once. Lost or late results remain unconfirmed. Responses contain stored observations and reserved, not measured, runtime. An idempotency key is required in the header or body; both must match when supplied together.\nsdk_method: start_persistent_box\naccess: write\nparameters: organizationId (string) [required], boxId (string) [required], Idempotency-Key (string)\nrequest: application/json\nresponses: 200, 202, 400, 401, 402, 403, 404, 409, 503\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.start_persistent_box(body=..., box_id=..., idempotency_key_2=..., organization_id=...)"
+    },
+    {
+      "access": "write",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.stop_box(box_id=..., organization_id=...)",
+      "id": "operation:stopBox",
+      "kind": "operation",
+      "method": "DELETE",
+      "operation_id": "stopBox",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "description": "",
+          "location": "path",
+          "name": "boxId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/boxes/{boxId}",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Stopped",
+          "status_code": "200"
+        },
+        {
+          "description": "The provider refused; state unchanged",
+          "status_code": "502"
+        }
+      ],
+      "sdk_method": "stop_box",
+      "search_text": "stopBox DELETE /v1/organizations/{organizationId}/boxes/{boxId} Stop a hosted box Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Stops the box at the provider, then records it stopped. stop_box write organizationId boxId 200 502 productSession",
+      "summary": "Stop a hosted box",
+      "text": "DELETE /v1/organizations/{organizationId}/boxes/{boxId}\noperation_id: stopBox\nsummary: Stop a hosted box\ndescription: Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Stops the box at the provider, then records it stopped.\nsdk_method: stop_box\naccess: write\nparameters: organizationId (string) [required], boxId (string) [required]\nresponses: 200, 502\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.stop_box(box_id=..., organization_id=...)"
+    },
+    {
+      "access": "write",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.stop_persistent_box(body=..., box_id=..., idempotency_key_2=..., organization_id=...)",
+      "id": "operation:stopPersistentBox",
+      "kind": "operation",
+      "method": "POST",
+      "operation_id": "stopPersistentBox",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "description": "",
+          "location": "path",
+          "name": "boxId",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "description": "",
+          "location": "header",
+          "name": "Idempotency-Key",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/persistent-boxes/{boxId}/stop",
+      "request_media": [
+        "application/json"
+      ],
+      "responses": [
+        {
+          "description": "Confirmed operation or replayed receipt.",
+          "status_code": "200"
+        },
+        {
+          "description": "Operation remains unconfirmed; reconcile its operation ID without repeating the mutation.",
+          "status_code": "202"
+        },
+        {
+          "description": "Invalid bounded lifecycle request.",
+          "status_code": "400"
+        },
+        {
+          "description": "Product session required.",
+          "status_code": "401"
+        },
+        {
+          "description": "Durable feature or quota denied.",
+          "status_code": "402"
+        },
+        {
+          "description": "Fresh operation authority denied.",
+          "status_code": "403"
+        },
+        {
+          "description": "Box or operation missing in the exact organization and deployment.",
+          "status_code": "404"
+        },
+        {
+          "description": "Conflicting operation, unresolved evidence or unavailable runtime budget.",
+          "status_code": "409"
+        },
+        {
+          "description": "Authority, storage or matching operator adapter unavailable.",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "stop_persistent_box",
+      "search_text": "stopPersistentBox POST /v1/organizations/{organizationId}/persistent-boxes/{boxId}/stop Stop a retained hosted box Requires fresh boxes.close authority, including after a paid-feature downgrade. Stops the pinned allocation while retaining its disk, box count and existing runtime reservations. No query parameters are accepted. Mutations commit an intention before dispatch and dispatch at most once. Lost or late results remain unconfirmed. Responses contain stored observations and reserved, not measured, runtime. An idempotency key is required in the header or body; both must match when supplied together. stop_persistent_box write organizationId boxId Idempotency-Key idempotencyKey 200 202 400 401 402 403 404 409 503 productSession",
+      "summary": "Stop a retained hosted box",
+      "text": "POST /v1/organizations/{organizationId}/persistent-boxes/{boxId}/stop\noperation_id: stopPersistentBox\nsummary: Stop a retained hosted box\ndescription: Requires fresh boxes.close authority, including after a paid-feature downgrade. Stops the pinned allocation while retaining its disk, box count and existing runtime reservations. No query parameters are accepted. Mutations commit an intention before dispatch and dispatch at most once. Lost or late results remain unconfirmed. Responses contain stored observations and reserved, not measured, runtime. An idempotency key is required in the header or body; both must match when supplied together.\nsdk_method: stop_persistent_box\naccess: write\nparameters: organizationId (string) [required], boxId (string) [required], Idempotency-Key (string)\nrequest: application/json\nresponses: 200, 202, 400, 401, 402, 403, 404, 409, 503\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.stop_persistent_box(body=..., box_id=..., idempotency_key_2=..., organization_id=...)"
+    },
+    {
+      "access": "write",
+      "auth": [],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.stripe_webhook()",
+      "id": "operation:stripeWebhook",
+      "kind": "operation",
+      "method": "POST",
+      "operation_id": "stripeWebhook",
+      "parameters": [],
+      "path": "/v1/billing/stripe/webhook",
+      "request_media": [],
+      "responses": [
+        {
+          "description": "Received",
+          "status_code": "200"
+        },
+        {
+          "description": "Invalid signature or payload",
+          "status_code": "400"
+        },
+        {
+          "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl.",
+          "status_code": "409"
+        }
+      ],
+      "sdk_method": "stripe_webhook",
+      "search_text": "stripeWebhook POST /v1/billing/stripe/webhook Stripe webhook In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Authenticated by the Stripe-Signature header (HMAC-SHA256 with the endpoint secret, 5-minute tolerance); live-mode events are refused. Answers 503 billing_unavailable until the Stripe secrets are configured. stripe_webhook write 200 400 409",
+      "summary": "Stripe webhook",
+      "text": "POST /v1/billing/stripe/webhook\noperation_id: stripeWebhook\nsummary: Stripe webhook\ndescription: In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Authenticated by the Stripe-Signature header (HMAC-SHA256 with the endpoint secret, 5-minute tolerance); live-mode events are refused. Answers 503 billing_unavailable until the Stripe secrets are configured.\nsdk_method: stripe_webhook\naccess: write\nresponses: 200, 400, 409\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.stripe_webhook()"
+    },
+    {
+      "access": "write",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.submit_job(body=...)",
+      "id": "operation:submitJob",
+      "kind": "operation",
+      "method": "POST",
+      "operation_id": "submitJob",
+      "parameters": [],
+      "path": "/v1/jobs",
+      "request_media": [
+        "application/json"
+      ],
+      "responses": [
+        {
+          "description": "Replayed",
+          "status_code": "200"
+        },
+        {
+          "description": "Created",
+          "status_code": "201"
+        },
+        {
+          "description": "Session required",
+          "status_code": "401"
+        },
+        {
+          "description": "Storage not configured",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "submit_job",
+      "search_text": "submitJob POST /v1/jobs Submit an idempotent job (Idempotency-Key header) Requires a JackAISaaS product session. Answers 503 execution_api_unavailable until production storage is configured. Managed admission requires an explicit cloud.jobs (or cloud.agents) entitlement and valid jobsPerMonth (or agentRunsPerMonth) quota from the Hub; a plan name alone grants nothing. submit_job write 200 201 401 503 productSession",
+      "summary": "Submit an idempotent job (Idempotency-Key header)",
+      "text": "POST /v1/jobs\noperation_id: submitJob\nsummary: Submit an idempotent job (Idempotency-Key header)\ndescription: Requires a JackAISaaS product session. Answers 503 execution_api_unavailable until production storage is configured. Managed admission requires an explicit cloud.jobs (or cloud.agents) entitlement and valid jobsPerMonth (or agentRunsPerMonth) quota from the Hub; a plan name alone grants nothing.\nsdk_method: submit_job\naccess: write\nrequest: application/json\nresponses: 200, 201, 401, 503\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.submit_job(body=...)"
+    },
+    {
+      "access": "write",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.sync_observed_boxes(body=..., organization_id=...)",
+      "id": "operation:syncObservedBoxes",
+      "kind": "operation",
+      "method": "POST",
+      "operation_id": "syncObservedBoxes",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/observed-boxes/sync",
+      "request_media": [
+        "application/json"
+      ],
+      "responses": [
+        {
+          "description": "Snapshot accepted; private and not cacheable.",
+          "status_code": "200"
+        },
+        {
+          "description": "Invalid observation snapshot.",
+          "status_code": "400"
+        },
+        {
+          "description": "No valid product session.",
+          "status_code": "401"
+        },
+        {
+          "description": "Organization or scope denied.",
+          "status_code": "403"
+        },
+        {
+          "description": "Snapshot exceeds 64 KiB.",
+          "status_code": "413"
+        },
+        {
+          "description": "Inventory storage unavailable.",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "sync_observed_boxes",
+      "search_text": "syncObservedBoxes POST /v1/organizations/{organizationId}/observed-boxes/sync Replace one actor-owned client observation snapshot Requires current boxes.write product-session authorization for this exact organization. The server timestamps the snapshot, isolates it by actor and source, and expires it after 24 hours. No credentials, metrics, command output or guest contents are accepted. This does not create boxes or charge usage. sync_observed_boxes write organizationId boxes sourceId 200 400 401 403 413 503 productSession",
+      "summary": "Replace one actor-owned client observation snapshot",
+      "text": "POST /v1/organizations/{organizationId}/observed-boxes/sync\noperation_id: syncObservedBoxes\nsummary: Replace one actor-owned client observation snapshot\ndescription: Requires current boxes.write product-session authorization for this exact organization. The server timestamps the snapshot, isolates it by actor and source, and expires it after 24 hours. No credentials, metrics, command output or guest contents are accepted. This does not create boxes or charge usage.\nsdk_method: sync_observed_boxes\naccess: write\nparameters: organizationId (string) [required]\nrequest: application/json\nresponses: 200, 400, 401, 403, 413, 503\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.sync_observed_boxes(body=..., organization_id=...)"
+    },
+    {
+      "access": "write",
+      "auth": [
+        {
+          "name": "adminToken",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.update_auth_gate(body=...)",
+      "id": "operation:updateAuthGate",
+      "kind": "operation",
+      "method": "PUT",
+      "operation_id": "updateAuthGate",
+      "parameters": [],
+      "path": "/v1/auth/gate",
+      "request_media": [
+        "application/json"
+      ],
+      "responses": [
+        {
+          "description": "Updated",
+          "status_code": "200"
+        },
+        {
+          "description": "Admin token required",
+          "status_code": "401"
+        },
+        {
+          "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl.",
+          "status_code": "409"
+        }
+      ],
+      "sdk_method": "update_auth_gate",
+      "search_text": "updateAuthGate PUT /v1/auth/gate Open or close public registration, approve or revoke an invited email In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. update_auth_gate write 200 401 409 adminToken",
+      "summary": "Open or close public registration, approve or revoke an invited email",
+      "text": "PUT /v1/auth/gate\noperation_id: updateAuthGate\nsummary: Open or close public registration, approve or revoke an invited email\ndescription: In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode.\nsdk_method: update_auth_gate\naccess: write\nrequest: application/json\nresponses: 200, 401, 409\nauth: adminToken\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.update_auth_gate(body=...)"
+    },
+    {
+      "access": "write",
+      "auth": [
+        {
+          "name": "adminToken",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.update_plan(body=...)",
+      "id": "operation:updatePlan",
+      "kind": "operation",
+      "method": "POST",
+      "operation_id": "updatePlan",
+      "parameters": [],
+      "path": "/v1/admin/plans",
+      "request_media": [
+        "application/json"
+      ],
+      "responses": [
+        {
+          "description": "Updated",
+          "status_code": "200"
+        },
+        {
+          "description": "Admin token required",
+          "status_code": "401"
+        },
+        {
+          "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl.",
+          "status_code": "409"
+        }
+      ],
+      "sdk_method": "update_plan",
+      "search_text": "updatePlan POST /v1/admin/plans Enable, disable or delete a plan In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. update_plan write 200 401 409 adminToken",
+      "summary": "Enable, disable or delete a plan",
+      "text": "POST /v1/admin/plans\noperation_id: updatePlan\nsummary: Enable, disable or delete a plan\ndescription: In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode.\nsdk_method: update_plan\naccess: write\nrequest: application/json\nresponses: 200, 401, 409\nauth: adminToken\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.update_plan(body=...)"
+    },
+    {
+      "access": "write",
+      "auth": [
+        {
+          "name": "productSession",
+          "type": "http"
+        }
+      ],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.upsert_member(body=..., organization_id=...)",
+      "id": "operation:upsertMember",
+      "kind": "operation",
+      "method": "POST",
+      "operation_id": "upsertMember",
+      "parameters": [
+        {
+          "description": "",
+          "location": "path",
+          "name": "organizationId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "path": "/v1/organizations/{organizationId}/members",
+      "request_media": [
+        "application/json"
+      ],
+      "responses": [
+        {
+          "description": "Member updated",
+          "status_code": "200"
+        },
+        {
+          "description": "Member added",
+          "status_code": "201"
+        },
+        {
+          "description": "Seat limit reached or entitlement missing",
+          "status_code": "402"
+        },
+        {
+          "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl.",
+          "status_code": "409"
+        }
+      ],
+      "sdk_method": "upsert_member",
+      "search_text": "upsertMember POST /v1/organizations/{organizationId}/members Add or update a member In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Adding an active member counts against the plan seat limit (402 quota_exceeded). upsert_member write organizationId email name role status userId 200 201 402 409 productSession",
+      "summary": "Add or update a member",
+      "text": "POST /v1/organizations/{organizationId}/members\noperation_id: upsertMember\nsummary: Add or update a member\ndescription: In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Adding an active member counts against the plan seat limit (402 quota_exceeded).\nsdk_method: upsert_member\naccess: write\nparameters: organizationId (string) [required]\nrequest: application/json\nresponses: 200, 201, 402, 409\nauth: productSession\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.upsert_member(body=..., organization_id=...)"
+    },
+    {
+      "access": "write",
+      "auth": [],
+      "example": "from omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.verify_license(body=...)",
+      "id": "operation:verifyLicense",
+      "kind": "operation",
+      "method": "POST",
+      "operation_id": "verifyLicense",
+      "parameters": [],
+      "path": "/v1/auth/verify",
+      "request_media": [
+        "application/json"
+      ],
+      "responses": [
+        {
+          "description": "Valid",
+          "status_code": "200"
+        },
+        {
+          "description": "Invalid license",
+          "status_code": "401"
+        },
+        {
+          "description": "Refused",
+          "status_code": "403"
+        },
+        {
+          "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl.",
+          "status_code": "409"
+        },
+        {
+          "description": "Verification not configured",
+          "status_code": "503"
+        }
+      ],
+      "sdk_method": "verify_license",
+      "search_text": "verifyLicense POST /v1/auth/verify Verify a license token and the active plan gate In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. verify_license write 200 401 403 409 503",
+      "summary": "Verify a license token and the active plan gate",
+      "text": "POST /v1/auth/verify\noperation_id: verifyLicense\nsummary: Verify a license token and the active plan gate\ndescription: In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode.\nsdk_method: verify_license\naccess: write\nrequest: application/json\nresponses: 200, 401, 403, 409, 503\nexample:\nfrom omniwrap_mcp_e3fd4c744ae8_sdk import Client\nclient = Client(base_url=..., auth={...})\nresult = client.verify_license(body=...)"
+    }
+  ],
+  "ranking": "deterministic-bm25-v1",
+  "schema": "omniwrap.mcp-docs/1",
+  "server_name": "boxfleet-hosted-control-plane-boxfleet-io-python-sdk"
+}

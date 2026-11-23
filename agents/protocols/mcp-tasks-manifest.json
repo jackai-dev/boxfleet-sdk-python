@@ -1,0 +1,498 @@
+{
+  "lifecycle": {
+    "initialState": "working",
+    "interactiveState": "input_required",
+    "terminalStates": [
+      "completed",
+      "failed",
+      "cancelled",
+      "reconciliation_required"
+    ],
+    "transitions": {
+      "cancelled": [],
+      "completed": [],
+      "failed": [],
+      "input_required": [
+        "cancelled",
+        "completed",
+        "failed",
+        "reconciliation_required",
+        "working"
+      ],
+      "reconciliation_required": [],
+      "working": [
+        "cancelled",
+        "completed",
+        "failed",
+        "input_required",
+        "reconciliation_required",
+        "working"
+      ]
+    }
+  },
+  "operations": [
+    {
+      "idempotent": false,
+      "method": "POST",
+      "operationId": "cancelJob",
+      "path": "/v1/jobs/{jobId}/cancel",
+      "readOnly": false,
+      "reconciliationOnInterrupt": true
+    },
+    {
+      "idempotent": false,
+      "method": "POST",
+      "operationId": "closeHostedWorkspace",
+      "path": "/v1/workspaces/{workspaceId}/close",
+      "readOnly": false,
+      "reconciliationOnInterrupt": true
+    },
+    {
+      "idempotent": false,
+      "method": "POST",
+      "operationId": "closePersistentBox",
+      "path": "/v1/organizations/{organizationId}/persistent-boxes/{boxId}/close",
+      "readOnly": false,
+      "reconciliationOnInterrupt": true
+    },
+    {
+      "idempotent": false,
+      "method": "POST",
+      "operationId": "controlUser",
+      "path": "/v1/admin/users",
+      "readOnly": false,
+      "reconciliationOnInterrupt": true
+    },
+    {
+      "idempotent": false,
+      "method": "POST",
+      "operationId": "createBillingPortal",
+      "path": "/v1/organizations/{organizationId}/billing/portal",
+      "readOnly": false,
+      "reconciliationOnInterrupt": true
+    },
+    {
+      "idempotent": false,
+      "method": "POST",
+      "operationId": "createBox",
+      "path": "/v1/organizations/{organizationId}/boxes",
+      "readOnly": false,
+      "reconciliationOnInterrupt": true
+    },
+    {
+      "idempotent": false,
+      "method": "POST",
+      "operationId": "createCheckout",
+      "path": "/v1/organizations/{organizationId}/billing/checkout",
+      "readOnly": false,
+      "reconciliationOnInterrupt": true
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "getAccountsConfig",
+      "path": "/v1/accounts/config",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "getAdminConsole",
+      "path": "/v1/admin/console",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "getAdminPlans",
+      "path": "/v1/admin/plans",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "getAuthGate",
+      "path": "/v1/auth/gate",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "getBilling",
+      "path": "/v1/organizations/{organizationId}/billing",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "getBox",
+      "path": "/v1/organizations/{organizationId}/boxes/{boxId}",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "getEntitlements",
+      "path": "/v1/organizations/{organizationId}/entitlements",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "getFleet",
+      "path": "/v1/organizations/{organizationId}/fleet",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "getFleetPolicy",
+      "path": "/v1/organizations/{organizationId}/fleet/policy",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "getHealth",
+      "path": "/health",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "getHostedWorkspace",
+      "path": "/v1/workspaces/{workspaceId}",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "getHostedWorkspaceOperation",
+      "path": "/v1/workspaces/{workspaceId}/operations/{operationId}",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "getHostedWorkspaceSource",
+      "path": "/v1/workspaces/{workspaceId}/source",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "getJob",
+      "path": "/v1/jobs/{jobId}",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "getPersistentBox",
+      "path": "/v1/organizations/{organizationId}/persistent-boxes/{boxId}",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "getPersistentBoxProviderUsage",
+      "path": "/v1/organizations/{organizationId}/persistent-boxes/{boxId}/usage",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "getPlans",
+      "path": "/v1/plans",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": false,
+      "method": "POST",
+      "operationId": "ingestTelemetry",
+      "path": "/v1/telemetry/ingest",
+      "readOnly": false,
+      "reconciliationOnInterrupt": true
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "listBoxes",
+      "path": "/v1/organizations/{organizationId}/boxes",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "listHostedWorkspaces",
+      "path": "/v1/workspaces",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "listInvoices",
+      "path": "/v1/organizations/{organizationId}/billing/invoices",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "listJobEvents",
+      "path": "/v1/jobs/{jobId}/events",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "listJobs",
+      "path": "/v1/jobs",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "listMembers",
+      "path": "/v1/organizations/{organizationId}/members",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "listObservedBoxes",
+      "path": "/v1/organizations/{organizationId}/observed-boxes",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "listPersistentBoxOffers",
+      "path": "/v1/organizations/{organizationId}/persistent-boxes/offers",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "listPersistentBoxes",
+      "path": "/v1/organizations/{organizationId}/persistent-boxes",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "listUsers",
+      "path": "/v1/admin/users",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "listWaitlist",
+      "path": "/v1/waitlist",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": false,
+      "method": "POST",
+      "operationId": "openHostedWorkspace",
+      "path": "/v1/workspaces",
+      "readOnly": false,
+      "reconciliationOnInterrupt": true
+    },
+    {
+      "idempotent": false,
+      "method": "POST",
+      "operationId": "provisionPersistentBox",
+      "path": "/v1/organizations/{organizationId}/persistent-boxes",
+      "readOnly": false,
+      "reconciliationOnInterrupt": true
+    },
+    {
+      "idempotent": true,
+      "method": "PUT",
+      "operationId": "putFleetPolicy",
+      "path": "/v1/organizations/{organizationId}/fleet/policy",
+      "readOnly": false,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": true,
+      "method": "GET",
+      "operationId": "readTelemetry",
+      "path": "/v1/admin/telemetry",
+      "readOnly": true,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": false,
+      "method": "POST",
+      "operationId": "reconcilePersistentBox",
+      "path": "/v1/organizations/{organizationId}/persistent-boxes/{boxId}/reconcile",
+      "readOnly": false,
+      "reconciliationOnInterrupt": true
+    },
+    {
+      "idempotent": false,
+      "method": "POST",
+      "operationId": "recoverHostedWorkspace",
+      "path": "/v1/workspaces/{workspaceId}/recover",
+      "readOnly": false,
+      "reconciliationOnInterrupt": true
+    },
+    {
+      "idempotent": false,
+      "method": "POST",
+      "operationId": "register",
+      "path": "/v1/auth/register",
+      "readOnly": false,
+      "reconciliationOnInterrupt": true
+    },
+    {
+      "idempotent": true,
+      "method": "DELETE",
+      "operationId": "removeMember",
+      "path": "/v1/organizations/{organizationId}/members/{userId}",
+      "readOnly": false,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": false,
+      "method": "POST",
+      "operationId": "requestAccess",
+      "path": "/v1/waitlist",
+      "readOnly": false,
+      "reconciliationOnInterrupt": true
+    },
+    {
+      "idempotent": false,
+      "method": "POST",
+      "operationId": "runHostedWorkspace",
+      "path": "/v1/workspaces/{workspaceId}/run",
+      "readOnly": false,
+      "reconciliationOnInterrupt": true
+    },
+    {
+      "idempotent": false,
+      "method": "POST",
+      "operationId": "startPersistentBox",
+      "path": "/v1/organizations/{organizationId}/persistent-boxes/{boxId}/start",
+      "readOnly": false,
+      "reconciliationOnInterrupt": true
+    },
+    {
+      "idempotent": true,
+      "method": "DELETE",
+      "operationId": "stopBox",
+      "path": "/v1/organizations/{organizationId}/boxes/{boxId}",
+      "readOnly": false,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": false,
+      "method": "POST",
+      "operationId": "stopPersistentBox",
+      "path": "/v1/organizations/{organizationId}/persistent-boxes/{boxId}/stop",
+      "readOnly": false,
+      "reconciliationOnInterrupt": true
+    },
+    {
+      "idempotent": false,
+      "method": "POST",
+      "operationId": "stripeWebhook",
+      "path": "/v1/billing/stripe/webhook",
+      "readOnly": false,
+      "reconciliationOnInterrupt": true
+    },
+    {
+      "idempotent": false,
+      "method": "POST",
+      "operationId": "submitJob",
+      "path": "/v1/jobs",
+      "readOnly": false,
+      "reconciliationOnInterrupt": true
+    },
+    {
+      "idempotent": false,
+      "method": "POST",
+      "operationId": "syncObservedBoxes",
+      "path": "/v1/organizations/{organizationId}/observed-boxes/sync",
+      "readOnly": false,
+      "reconciliationOnInterrupt": true
+    },
+    {
+      "idempotent": true,
+      "method": "PUT",
+      "operationId": "updateAuthGate",
+      "path": "/v1/auth/gate",
+      "readOnly": false,
+      "reconciliationOnInterrupt": false
+    },
+    {
+      "idempotent": false,
+      "method": "POST",
+      "operationId": "updatePlan",
+      "path": "/v1/admin/plans",
+      "readOnly": false,
+      "reconciliationOnInterrupt": true
+    },
+    {
+      "idempotent": false,
+      "method": "POST",
+      "operationId": "upsertMember",
+      "path": "/v1/organizations/{organizationId}/members",
+      "readOnly": false,
+      "reconciliationOnInterrupt": true
+    },
+    {
+      "idempotent": false,
+      "method": "POST",
+      "operationId": "verifyLicense",
+      "path": "/v1/auth/verify",
+      "readOnly": false,
+      "reconciliationOnInterrupt": true
+    }
+  ],
+  "pollIntervalMs": 1000,
+  "reconciliationPolicy": {
+    "automaticBlindRetry": false,
+    "unconfirmedNonIdempotentWriteState": "reconciliation_required"
+  },
+  "schema": "omniwrap.mcp-tasks/v1",
+  "specificationVersion": "2026-07-28",
+  "states": [
+    "working",
+    "input_required",
+    "completed",
+    "failed",
+    "cancelled",
+    "reconciliation_required"
+  ]
+}

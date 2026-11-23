@@ -1,0 +1,3255 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "BoxFleet hosted control plane (boxfleet.io)",
+    "version": "0.3.0",
+    "description": "Routes served by the boxfleet.io Worker. Default managed-connected deployments use JackAISaaS as the account, membership, subscription and billing authority. Product sessions must match the exact product, environment and organization. Managed features require explicit Hub entitlements and valid Hub quotas; neither local Stripe subscriptions nor local plan defaults can grant missing rights. Local issuer, plan mutations, membership mutations and Stripe billing routes are available only in explicitly selected autonomous modes; managed mode returns 409 account_authority_required with Hub account and portal URLs. Historical administrative reads are marked nonauthoritative. Job and organization records use PostgreSQL; missing storage answers 503. Hosted boxes need a configured provider. Hosted /v1/workspaces use tenant/product/environment ownership from current JackAISaaS product sessions, PostgreSQL lifecycle receipts and private source snapshots. Their finite lifetime is distinct from permanent VMs. Local CLI/MCP workspaces and synchronization remain separate workstation operations described in boxfleet.openapi.yaml. Removed simulation routes remain unavailable. tests/openapi-contract.test.mjs checks the complete route set in federated-autonomous mode; tests/account-authority.test.mjs checks managed refusals."
+  },
+  "servers": [
+    {
+      "url": "https://boxfleet.io",
+      "description": "BoxFleet website and control-plane Worker"
+    }
+  ],
+  "security": [],
+  "components": {
+    "securitySchemes": {
+      "productSession": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JackAISaaS product session, verified by the account authority."
+      },
+      "adminToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "BOXFLEET_SUPER_ADMIN_TOKEN (admin routes) or BOXFLEET_WAITLIST_ADMIN_TOKEN (waitlist export and registration gate)."
+      },
+      "licenseToken": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-boxfleet-license",
+        "description": "BoxFleet license token signed with the deployment license secret. Accepted only in isolated-standalone or federated-autonomous mode; local-license authentication is refused in managed-connected mode."
+      }
+    },
+    "schemas": {
+      "ObservedBox": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "provider",
+          "boxId",
+          "state",
+          "kind"
+        ],
+        "properties": {
+          "provider": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "boxId": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "running",
+              "stopped",
+              "paused",
+              "starting",
+              "stopping",
+              "creating",
+              "uncertain",
+              "attached",
+              "unknown"
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "provider-list",
+              "saved-record"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "registryId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "HostedPersistentBoxClose": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "organizationId",
+          "box",
+          "operationId",
+          "outcome"
+        ],
+        "properties": {
+          "organizationId": {
+            "type": "string"
+          },
+          "box": {
+            "$ref": "#/components/schemas/HostedPersistentBoxRead"
+          },
+          "operationId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid",
+            "description": "Stable close intention, null for legacy records without an intention."
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "closed",
+              "unconfirmed"
+            ]
+          }
+        }
+      },
+      "HostedPersistentUsageMeter": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "unit",
+          "status",
+          "quantity",
+          "knownQuantity",
+          "coveredMilliseconds",
+          "windowMilliseconds"
+        ],
+        "properties": {
+          "unit": {
+            "type": "string",
+            "enum": [
+              "millisecond",
+              "gibibyte-millisecond"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "complete",
+              "partial",
+              "unknown"
+            ]
+          },
+          "quantity": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "description": "Only non-null with full interval coverage."
+          },
+          "knownQuantity": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Observed quantity within covered intervals; not a billable total when coverage is incomplete."
+          },
+          "coveredMilliseconds": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "windowMilliseconds": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "HostedPersistentUsageRead": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "window",
+          "billingIntegrated",
+          "reservationsReleased",
+          "capacityReservation",
+          "runtime",
+          "retainedStorage"
+        ],
+        "properties": {
+          "schema": {
+            "type": "string",
+            "enum": [
+              "boxfleet.persistent-usage/v1"
+            ]
+          },
+          "window": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "from",
+              "to"
+            ],
+            "properties": {
+              "from": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "to": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "billingIntegrated": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          },
+          "reservationsReleased": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          },
+          "capacityReservation": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "retainedBoxes",
+              "storageGiB"
+            ],
+            "properties": {
+              "retainedBoxes": {
+                "type": "integer",
+                "enum": [
+                  0,
+                  1
+                ]
+              },
+              "storageGiB": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1048576
+              }
+            }
+          },
+          "runtime": {
+            "$ref": "#/components/schemas/HostedPersistentUsageMeter"
+          },
+          "retainedStorage": {
+            "$ref": "#/components/schemas/HostedPersistentUsageMeter"
+          }
+        }
+      },
+      "HostedPersistentBoxRead": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "productId",
+          "environmentKey",
+          "provider",
+          "template",
+          "state",
+          "storageGiB",
+          "createdAt",
+          "updatedAt",
+          "closedAt",
+          "runtime"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "productId": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "environmentKey": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "provider": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "template": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "provisioning",
+              "running",
+              "stopped",
+              "uncertain",
+              "closing",
+              "closed"
+            ],
+            "description": "Stored lifecycle observation, not a fresh provider probe."
+          },
+          "storageGiB": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1048576,
+            "description": "Reserved allocated storage, not measured used-file bytes or a price."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "closedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "reconciliationOperationId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Only on an uncertain item read after the current pending or uncertain lifecycle intention is verified in the same organization, product and environment. A read does not confirm dispatch or authorize reconciliation."
+          },
+          "runtime": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "status",
+              "reserved"
+            ],
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not-metered"
+                ]
+              },
+              "reserved": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Latest runtime reservation on item reads. Null on collection summaries means details were not included; it does not mean zero reserved or consumed runtime. No measured usage or charge is reported.",
+                "additionalProperties": false,
+                "required": [
+                  "month",
+                  "minutes",
+                  "budgetUntil"
+                ],
+                "properties": {
+                  "month": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-(?:0[1-9]|1[0-2])$",
+                    "description": "UTC reservation month."
+                  },
+                  "minutes": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 446400000
+                  },
+                  "budgetUntil": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Budget window end, not provider expiry or proof the box stopped."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "getHealth",
+        "summary": "Control-plane health, storage readiness and registration mode",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/accounts/config": {
+      "get": {
+        "operationId": "getAccountsConfig",
+        "summary": "Account authority configuration (non-secret)",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/auth/gate": {
+      "get": {
+        "operationId": "getAuthGate",
+        "summary": "Registration gate state and waitlist count",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "Managed mode reports JackAISaaS account authority and local registration disabled. Autonomous modes report their local registration gate."
+      },
+      "put": {
+        "operationId": "updateAuthGate",
+        "summary": "Open or close public registration, approve or revoke an invited email",
+        "security": [
+          {
+            "adminToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated"
+          },
+          "401": {
+            "description": "Admin token required"
+          },
+          "409": {
+            "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl."
+          }
+        },
+        "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode."
+      }
+    },
+    "/v1/waitlist": {
+      "post": {
+        "operationId": "requestAccess",
+        "summary": "Request beta access; one uniform answer, existing entries are never overwritten",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Received"
+          },
+          "400": {
+            "description": "Invalid email"
+          },
+          "413": {
+            "description": "Body too large"
+          },
+          "429": {
+            "description": "Rate limited"
+          }
+        }
+      },
+      "get": {
+        "operationId": "listWaitlist",
+        "summary": "Export access requests as JSON or CSV (?format=csv)",
+        "security": [
+          {
+            "adminToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Requests"
+          },
+          "401": {
+            "description": "Admin token required"
+          }
+        }
+      }
+    },
+    "/v1/auth/register": {
+      "post": {
+        "operationId": "register",
+        "summary": "Invite-only registration with email proof: without \"code\" a 6-digit code is emailed; with the code a license is issued",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "License issued"
+          },
+          "202": {
+            "description": "Verification code sent (or withheld by the resend cooldown)"
+          },
+          "400": {
+            "description": "Invalid or expired code"
+          },
+          "403": {
+            "description": "Not invited or refused"
+          },
+          "409": {
+            "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl."
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "503": {
+            "description": "Registration not configured"
+          }
+        },
+        "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode."
+      }
+    },
+    "/v1/auth/verify": {
+      "post": {
+        "operationId": "verifyLicense",
+        "summary": "Verify a license token and the active plan gate",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Valid"
+          },
+          "401": {
+            "description": "Invalid license"
+          },
+          "403": {
+            "description": "Refused"
+          },
+          "409": {
+            "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl."
+          },
+          "503": {
+            "description": "Verification not configured"
+          }
+        },
+        "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode."
+      }
+    },
+    "/v1/telemetry/ingest": {
+      "post": {
+        "operationId": "ingestTelemetry",
+        "summary": "Opt-in usage event (allowlisted fields only, 8 KiB limit)",
+        "security": [
+          {
+            "licenseToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Stored"
+          },
+          "400": {
+            "description": "Invalid event"
+          },
+          "401": {
+            "description": "License required"
+          },
+          "409": {
+            "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl."
+          },
+          "413": {
+            "description": "Body too large"
+          },
+          "503": {
+            "description": "Ingestion not configured"
+          }
+        },
+        "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode."
+      }
+    },
+    "/v1/plans": {
+      "get": {
+        "operationId": "getPlans",
+        "summary": "Public plan catalog status",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "409": {
+            "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl."
+          }
+        },
+        "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode."
+      }
+    },
+    "/v1/jobs": {
+      "get": {
+        "operationId": "listJobs",
+        "summary": "List the organization jobs",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "Requires a JackAISaaS product session. Answers 503 execution_api_unavailable until production storage is configured.",
+        "responses": {
+          "200": {
+            "description": "Jobs"
+          },
+          "401": {
+            "description": "Session required"
+          },
+          "503": {
+            "description": "Storage not configured"
+          }
+        }
+      },
+      "post": {
+        "operationId": "submitJob",
+        "summary": "Submit an idempotent job (Idempotency-Key header)",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "Requires a JackAISaaS product session. Answers 503 execution_api_unavailable until production storage is configured. Managed admission requires an explicit cloud.jobs (or cloud.agents) entitlement and valid jobsPerMonth (or agentRunsPerMonth) quota from the Hub; a plan name alone grants nothing.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Replayed"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Session required"
+          },
+          "503": {
+            "description": "Storage not configured"
+          }
+        }
+      }
+    },
+    "/v1/jobs/{jobId}": {
+      "get": {
+        "operationId": "getJob",
+        "summary": "Get one job in organization scope",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "Requires a JackAISaaS product session. Answers 503 execution_api_unavailable until production storage is configured.",
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/jobs/{jobId}/events": {
+      "get": {
+        "operationId": "listJobEvents",
+        "summary": "List job events",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "Requires a JackAISaaS product session. Answers 503 execution_api_unavailable until production storage is configured.",
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/jobs/{jobId}/cancel": {
+      "post": {
+        "operationId": "cancelJob",
+        "summary": "Cancel a job",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "Requires a JackAISaaS product session. Answers 503 execution_api_unavailable until production storage is configured.",
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/admin/console": {
+      "get": {
+        "operationId": "getAdminConsole",
+        "summary": "Super-admin JSON console",
+        "security": [
+          {
+            "adminToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Console"
+          },
+          "401": {
+            "description": "Admin token required"
+          }
+        },
+        "description": "In managed-connected mode these local records are historical, with authoritative:false and authority:local-history; they do not grant account roles or entitlements."
+      }
+    },
+    "/v1/admin/users": {
+      "get": {
+        "operationId": "listUsers",
+        "summary": "List registered and revoked users",
+        "security": [
+          {
+            "adminToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Users"
+          },
+          "401": {
+            "description": "Admin token required"
+          }
+        },
+        "description": "In managed-connected mode these local records are historical, with authoritative:false and authority:local-history; they do not grant account roles or entitlements."
+      },
+      "post": {
+        "operationId": "controlUser",
+        "summary": "Disable, ban, delete or re-enable a user",
+        "security": [
+          {
+            "adminToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Applied"
+          },
+          "401": {
+            "description": "Admin token required"
+          },
+          "409": {
+            "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl."
+          }
+        },
+        "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode."
+      }
+    },
+    "/v1/admin/plans": {
+      "get": {
+        "operationId": "getAdminPlans",
+        "summary": "Plan catalog with admin controls",
+        "security": [
+          {
+            "adminToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Plans"
+          },
+          "401": {
+            "description": "Admin token required"
+          }
+        },
+        "description": "In managed-connected mode these local records are historical, with authoritative:false and authority:local-history; they do not grant account roles or entitlements."
+      },
+      "post": {
+        "operationId": "updatePlan",
+        "summary": "Enable, disable or delete a plan",
+        "security": [
+          {
+            "adminToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated"
+          },
+          "401": {
+            "description": "Admin token required"
+          },
+          "409": {
+            "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl."
+          }
+        },
+        "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode."
+      }
+    },
+    "/v1/admin/telemetry": {
+      "get": {
+        "operationId": "readTelemetry",
+        "summary": "Read opt-in telemetry events",
+        "security": [
+          {
+            "adminToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Events"
+          },
+          "401": {
+            "description": "Admin token required"
+          }
+        }
+      }
+    },
+    "/v1/organizations/{organizationId}/members": {
+      "get": {
+        "operationId": "listMembers",
+        "summary": "List organization members",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Needs the org.members entitlement. In managed-connected mode these local records are historical, with authoritative:false and authority:local-history; they do not grant account roles or entitlements.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stored members and the plan seat limit"
+          }
+        }
+      },
+      "post": {
+        "operationId": "upsertMember",
+        "summary": "Add or update a member",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Adding an active member counts against the plan seat limit (402 quota_exceeded).",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Member updated"
+          },
+          "201": {
+            "description": "Member added"
+          },
+          "402": {
+            "description": "Seat limit reached or entitlement missing"
+          },
+          "409": {
+            "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "role"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "owner",
+                      "admin",
+                      "engineer",
+                      "member",
+                      "billing",
+                      "auditor"
+                    ]
+                  },
+                  "userId": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "active",
+                      "suspended"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/organizations/{organizationId}/members/{userId}": {
+      "delete": {
+        "operationId": "removeMember",
+        "summary": "Remove a member",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Removed"
+          },
+          "404": {
+            "description": "Unknown member"
+          },
+          "409": {
+            "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl."
+          }
+        }
+      }
+    },
+    "/v1/organizations/{organizationId}/fleet": {
+      "get": {
+        "operationId": "getFleet",
+        "summary": "Organization fleet view",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Needs the org.fleet entitlement. Members, boxes, policy and usage from storage.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stored fleet"
+          }
+        }
+      }
+    },
+    "/v1/organizations/{organizationId}/fleet/policy": {
+      "get": {
+        "operationId": "getFleetPolicy",
+        "summary": "Read the fleet policy",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. The policy is the stored one or the documented default (source tells which).",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Effective policy"
+          }
+        }
+      },
+      "put": {
+        "operationId": "putFleetPolicy",
+        "summary": "Update the fleet policy",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Only rules the control plane enforces are accepted; unknown fields answer 400.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stored policy"
+          },
+          "400": {
+            "description": "Invalid or unenforced field"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "allowedProviders": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "e2b"
+                      ]
+                    }
+                  },
+                  "allowedTemplates": {
+                    "type": "array",
+                    "maxItems": 50,
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "maxBoxLifetimeSeconds": {
+                    "type": "integer",
+                    "minimum": 60,
+                    "maximum": 86400
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/organizations/{organizationId}/observed-boxes": {
+      "get": {
+        "operationId": "listObservedBoxes",
+        "summary": "List client-reported local and provider box snapshots",
+        "description": "Requires current boxes.read product-session authorization for this exact organization. These are time-limited client reports, separate from hosted provider authority, billable usage and current Hub membership. No query parameters are accepted.",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Up to 100 non-expired client snapshots, private and not cacheable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "organizationId",
+                    "sources",
+                    "sourceLimitReached"
+                  ],
+                  "properties": {
+                    "organizationId": {
+                      "type": "string"
+                    },
+                    "sourceLimitReached": {
+                      "type": "boolean"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "sourceId",
+                          "observedAt",
+                          "expiresAt",
+                          "source",
+                          "boxes"
+                        ],
+                        "properties": {
+                          "sourceId": {
+                            "type": "string"
+                          },
+                          "observedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "expiresAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "source": {
+                            "type": "string",
+                            "const": "client-reported"
+                          },
+                          "boxes": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/ObservedBox"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No valid product session."
+          },
+          "403": {
+            "description": "Organization or scope denied."
+          },
+          "503": {
+            "description": "Inventory storage unavailable."
+          }
+        }
+      }
+    },
+    "/v1/organizations/{organizationId}/observed-boxes/sync": {
+      "post": {
+        "operationId": "syncObservedBoxes",
+        "summary": "Replace one actor-owned client observation snapshot",
+        "description": "Requires current boxes.write product-session authorization for this exact organization. The server timestamps the snapshot, isolates it by actor and source, and expires it after 24 hours. No credentials, metrics, command output or guest contents are accepted. This does not create boxes or charge usage.",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "sourceId",
+                  "boxes"
+                ],
+                "properties": {
+                  "sourceId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "boxes": {
+                    "type": "array",
+                    "maxItems": 200,
+                    "items": {
+                      "$ref": "#/components/schemas/ObservedBox"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Snapshot accepted; private and not cacheable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "organizationId",
+                    "source",
+                    "sourceId",
+                    "observedAt",
+                    "expiresAt",
+                    "count"
+                  ],
+                  "properties": {
+                    "organizationId": {
+                      "type": "string"
+                    },
+                    "source": {
+                      "type": "string",
+                      "const": "client-reported"
+                    },
+                    "sourceId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "observedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "expiresAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "count": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid observation snapshot."
+          },
+          "401": {
+            "description": "No valid product session."
+          },
+          "403": {
+            "description": "Organization or scope denied."
+          },
+          "413": {
+            "description": "Snapshot exceeds 64 KiB."
+          },
+          "503": {
+            "description": "Inventory storage unavailable."
+          }
+        }
+      }
+    },
+    "/v1/organizations/{organizationId}/persistent-boxes": {
+      "get": {
+        "operationId": "listPersistentBoxes",
+        "summary": "Read recent hosted durable box records",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "Requires fresh JackAISaaS boxes.read authorization for this exact organization, product and deployment environment. No paid-feature entitlement is required for these reads. Returns recent stored records only, with no provider call, provisioning or billing. Configuration fingerprints, provider identifiers, receipts and access credentials are omitted. Runtime remains not-metered. HEAD and the /api alias have the same authorization.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            },
+            "description": "Maximum recent records; duplicates and other query parameters are rejected."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bounded stored records, private and not cacheable. limitReached indicates the requested bound was filled, not an exact total or proof that more records exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "organizationId",
+                    "boxes",
+                    "limit",
+                    "limitReached"
+                  ],
+                  "properties": {
+                    "organizationId": {
+                      "type": "string"
+                    },
+                    "boxes": {
+                      "type": "array",
+                      "maxItems": 200,
+                      "items": {
+                        "$ref": "#/components/schemas/HostedPersistentBoxRead"
+                      }
+                    },
+                    "limit": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 200
+                    },
+                    "limitReached": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters."
+          },
+          "401": {
+            "description": "Missing or rejected product session."
+          },
+          "403": {
+            "description": "Current authority denied access or the organization/product/environment differs."
+          },
+          "503": {
+            "description": "Authority or durable record storage unavailable."
+          }
+        }
+      },
+      "post": {
+        "operationId": "provisionPersistentBox",
+        "summary": "Provision a durable box from a configured operator offer",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "Requires current JackAISaaS boxes.persistent.write authorization, org.boxes and org.persistent-boxes, and explicit bounded shared/durable allowances. The operator pins the provider, template and allocated storage. Runtime enforcement must be independently armed and recorded before allocation. An idempotency key is required in the header or body; if both are supplied they must match. A committed reservation dispatches create at most once; subsequent requests only observe it, including after server restart or a lost response. Minutes remain reserved and not-metered. No query parameters are accepted. Responses are private and not cacheable. The /api alias has the same contract. No production provider or runtime enforcer is configured by default.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "offer",
+                  "reserveMinutes"
+                ],
+                "properties": {
+                  "offer": {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9-]{0,63}$"
+                  },
+                  "reserveMinutes": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 446400000
+                  },
+                  "idempotencyKey": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Previously recorded running or closed allocation; replayed is true."
+          },
+          "201": {
+            "description": "Provider allocation confirmed and recorded as running. Runtime remains reserved, not measured.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "organizationId",
+                    "box",
+                    "outcome",
+                    "replayed"
+                  ],
+                  "properties": {
+                    "organizationId": {
+                      "type": "string"
+                    },
+                    "box": {
+                      "$ref": "#/components/schemas/HostedPersistentBoxRead"
+                    },
+                    "outcome": {
+                      "type": "string",
+                      "enum": [
+                        "running",
+                        "closed",
+                        "unconfirmed"
+                      ]
+                    },
+                    "replayed": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "The reservation is held and the allocation remains unconfirmed. Repeated requests never dispatch create again; operator reconciliation is required."
+          },
+          "400": {
+            "description": "Invalid body, unsupported fields, query parameters or idempotency key."
+          },
+          "401": {
+            "description": "Missing or rejected product session."
+          },
+          "402": {
+            "description": "Missing durable entitlement, bounded allowance or available capacity."
+          },
+          "403": {
+            "description": "Current authority denied the operation or target scope."
+          },
+          "409": {
+            "description": "Idempotency conflict, unresolved prior budget or UTC month boundary."
+          },
+          "413": {
+            "description": "Request body exceeds 4 KiB."
+          },
+          "503": {
+            "description": "Authority, storage, operator offer or independent runtime enforcement unavailable. Missing configuration is refused before reservation."
+          }
+        }
+      }
+    },
+    "/v1/organizations/{organizationId}/persistent-boxes/{boxId}": {
+      "get": {
+        "operationId": "getPersistentBox",
+        "summary": "Read one hosted durable box record and its latest runtime reservation",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "Requires fresh JackAISaaS boxes.read authorization and exact organization/product/environment ownership. Reads remain available after a paid-feature downgrade. The result is a stored observation with a reserved runtime budget, not measured consumption or provider availability. An uncertain item may include reconciliationOperationId after an exact scoped lifecycle-intention lookup, allowing recovery if the prior mutation response was lost; the collection never includes it. The handle does not confirm dispatch or remove the mutation fence, and POST reconcile still requires boxes.close. No credentials, configuration fingerprints, provider identifiers or deletion receipts are exposed. No query parameters or mutations are accepted.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "boxId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private stored record and reserved budget; runtime status is not-metered.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "organizationId",
+                    "box"
+                  ],
+                  "properties": {
+                    "organizationId": {
+                      "type": "string"
+                    },
+                    "box": {
+                      "$ref": "#/components/schemas/HostedPersistentBoxRead"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid UUID or query parameters."
+          },
+          "401": {
+            "description": "Missing or rejected product session."
+          },
+          "403": {
+            "description": "Current authority denied access or the organization/product/environment differs."
+          },
+          "404": {
+            "description": "No durable box in this exact target scope."
+          },
+          "503": {
+            "description": "Authority or durable record storage unavailable."
+          }
+        }
+      }
+    },
+    "/v1/organizations/{organizationId}/persistent-boxes/{boxId}/usage": {
+      "get": {
+        "operationId": "getPersistentBoxProviderUsage",
+        "summary": "Read scoped provider usage evidence for one hosted durable box",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "Requires fresh JackAISaaS boxes.read authority and exact organization/product/environment ownership. from and to are canonical UTC instants, at most 31 days apart and not in the future. The two meters distinguish measured runtime from retained allocated storage. Partial or unknown coverage has null quantity and knownQuantity is only an observed subtotal. No provider receipt, price, billing event or reservation release is exposed. GET and HEAD are private and not cacheable; the /api alias has the same contract.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "boxId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private provider evidence summary with explicit interval coverage.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "organizationId",
+                    "boxId",
+                    "usage"
+                  ],
+                  "properties": {
+                    "organizationId": {
+                      "type": "string"
+                    },
+                    "boxId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "usage": {
+                      "$ref": "#/components/schemas/HostedPersistentUsageRead"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid box ID or bounded UTC window."
+          },
+          "401": {
+            "description": "Missing or rejected product session."
+          },
+          "403": {
+            "description": "Current authority denied access or target scope differs."
+          },
+          "404": {
+            "description": "No durable box in this exact target scope."
+          },
+          "413": {
+            "description": "Stored evidence exceeds the per-read record bound; select a smaller window."
+          },
+          "503": {
+            "description": "Authority or usage storage unavailable."
+          }
+        }
+      }
+    },
+    "/v1/organizations/{organizationId}/persistent-boxes/offers": {
+      "get": {
+        "operationId": "listPersistentBoxOffers",
+        "summary": "List operator-installed durable offers",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "Fresh boxes.read authorization is required. Returns configured offer IDs, provider names, templates and allocated storage. This is not a provider account probe or live capacity promise. No query parameters are accepted. Credentials and routing fingerprints stay private.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Private configured offers.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "organizationId",
+                    "offers"
+                  ],
+                  "properties": {
+                    "organizationId": {
+                      "type": "string"
+                    },
+                    "offers": {
+                      "type": "array",
+                      "maxItems": 32,
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "id",
+                          "provider",
+                          "template",
+                          "storageGiB"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "provider": {
+                            "type": "string"
+                          },
+                          "template": {
+                            "type": "string"
+                          },
+                          "storageGiB": {
+                            "type": "integer",
+                            "minimum": 1
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Product session required."
+          },
+          "403": {
+            "description": "Current read authority denied."
+          },
+          "503": {
+            "description": "Storage or operator offer configuration unavailable."
+          }
+        }
+      }
+    },
+    "/v1/organizations/{organizationId}/persistent-boxes/{boxId}/start": {
+      "post": {
+        "operationId": "startPersistentBox",
+        "summary": "Start a retained hosted box",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "Requires fresh JackAISaaS boxes.persistent.write authority and positive durable/shared quotas. A confirmed stop is required. Reserves additional monthly runtime and arms independent enforcement before starting the pinned allocation. Retained storage stays reserved. No query parameters are accepted. Mutations commit an intention before dispatch and dispatch at most once. Lost or late results remain unconfirmed. Responses contain stored observations and reserved, not measured, runtime. An idempotency key is required in the header or body; both must match when supplied together.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "boxId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "idempotencyKey": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "reserveMinutes": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 446400000
+                  }
+                },
+                "required": [
+                  "reserveMinutes"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Confirmed operation or replayed receipt.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "organizationId",
+                    "box",
+                    "operationId",
+                    "outcome",
+                    "replayed"
+                  ],
+                  "properties": {
+                    "organizationId": {
+                      "type": "string"
+                    },
+                    "box": {
+                      "$ref": "#/components/schemas/HostedPersistentBoxRead"
+                    },
+                    "operationId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "outcome": {
+                      "type": "string",
+                      "enum": [
+                        "running",
+                        "stopped",
+                        "unconfirmed"
+                      ]
+                    },
+                    "replayed": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Operation remains unconfirmed; reconcile its operation ID without repeating the mutation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "organizationId",
+                    "box",
+                    "operationId",
+                    "outcome",
+                    "replayed"
+                  ],
+                  "properties": {
+                    "organizationId": {
+                      "type": "string"
+                    },
+                    "box": {
+                      "$ref": "#/components/schemas/HostedPersistentBoxRead"
+                    },
+                    "operationId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "outcome": {
+                      "type": "string",
+                      "enum": [
+                        "running",
+                        "stopped",
+                        "unconfirmed"
+                      ]
+                    },
+                    "replayed": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid bounded lifecycle request."
+          },
+          "401": {
+            "description": "Product session required."
+          },
+          "402": {
+            "description": "Durable feature or quota denied."
+          },
+          "403": {
+            "description": "Fresh operation authority denied."
+          },
+          "404": {
+            "description": "Box or operation missing in the exact organization and deployment."
+          },
+          "409": {
+            "description": "Conflicting operation, unresolved evidence or unavailable runtime budget."
+          },
+          "503": {
+            "description": "Authority, storage or matching operator adapter unavailable."
+          }
+        }
+      }
+    },
+    "/v1/organizations/{organizationId}/persistent-boxes/{boxId}/stop": {
+      "post": {
+        "operationId": "stopPersistentBox",
+        "summary": "Stop a retained hosted box",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "Requires fresh boxes.close authority, including after a paid-feature downgrade. Stops the pinned allocation while retaining its disk, box count and existing runtime reservations. No query parameters are accepted. Mutations commit an intention before dispatch and dispatch at most once. Lost or late results remain unconfirmed. Responses contain stored observations and reserved, not measured, runtime. An idempotency key is required in the header or body; both must match when supplied together.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "boxId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "idempotencyKey": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Confirmed operation or replayed receipt.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "organizationId",
+                    "box",
+                    "operationId",
+                    "outcome",
+                    "replayed"
+                  ],
+                  "properties": {
+                    "organizationId": {
+                      "type": "string"
+                    },
+                    "box": {
+                      "$ref": "#/components/schemas/HostedPersistentBoxRead"
+                    },
+                    "operationId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "outcome": {
+                      "type": "string",
+                      "enum": [
+                        "running",
+                        "stopped",
+                        "unconfirmed"
+                      ]
+                    },
+                    "replayed": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Operation remains unconfirmed; reconcile its operation ID without repeating the mutation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "organizationId",
+                    "box",
+                    "operationId",
+                    "outcome",
+                    "replayed"
+                  ],
+                  "properties": {
+                    "organizationId": {
+                      "type": "string"
+                    },
+                    "box": {
+                      "$ref": "#/components/schemas/HostedPersistentBoxRead"
+                    },
+                    "operationId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "outcome": {
+                      "type": "string",
+                      "enum": [
+                        "running",
+                        "stopped",
+                        "unconfirmed"
+                      ]
+                    },
+                    "replayed": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid bounded lifecycle request."
+          },
+          "401": {
+            "description": "Product session required."
+          },
+          "402": {
+            "description": "Durable feature or quota denied."
+          },
+          "403": {
+            "description": "Fresh operation authority denied."
+          },
+          "404": {
+            "description": "Box or operation missing in the exact organization and deployment."
+          },
+          "409": {
+            "description": "Conflicting operation, unresolved evidence or unavailable runtime budget."
+          },
+          "503": {
+            "description": "Authority, storage or matching operator adapter unavailable."
+          }
+        }
+      }
+    },
+    "/v1/organizations/{organizationId}/persistent-boxes/{boxId}/reconcile": {
+      "post": {
+        "operationId": "reconcilePersistentBox",
+        "summary": "Reconcile a retained hosted box",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "Requires fresh boxes.close authority. Observes the recorded operation without replaying a provider mutation. Only matching ownership, storage and target state can resolve uncertainty. No query parameters are accepted. Mutations commit an intention before dispatch and dispatch at most once. Lost or late results remain unconfirmed. Responses contain stored observations and reserved, not measured, runtime.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "boxId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "operationId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "operationId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Confirmed operation or replayed receipt.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "organizationId",
+                    "box",
+                    "operationId",
+                    "outcome",
+                    "replayed"
+                  ],
+                  "properties": {
+                    "organizationId": {
+                      "type": "string"
+                    },
+                    "box": {
+                      "$ref": "#/components/schemas/HostedPersistentBoxRead"
+                    },
+                    "operationId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "outcome": {
+                      "type": "string",
+                      "enum": [
+                        "running",
+                        "stopped",
+                        "unconfirmed"
+                      ]
+                    },
+                    "replayed": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Operation remains unconfirmed; reconcile its operation ID without repeating the mutation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "organizationId",
+                    "box",
+                    "operationId",
+                    "outcome",
+                    "replayed"
+                  ],
+                  "properties": {
+                    "organizationId": {
+                      "type": "string"
+                    },
+                    "box": {
+                      "$ref": "#/components/schemas/HostedPersistentBoxRead"
+                    },
+                    "operationId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "outcome": {
+                      "type": "string",
+                      "enum": [
+                        "running",
+                        "stopped",
+                        "unconfirmed"
+                      ]
+                    },
+                    "replayed": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid bounded lifecycle request."
+          },
+          "401": {
+            "description": "Product session required."
+          },
+          "402": {
+            "description": "Durable feature or quota denied."
+          },
+          "403": {
+            "description": "Fresh operation authority denied."
+          },
+          "404": {
+            "description": "Box or operation missing in the exact organization and deployment."
+          },
+          "409": {
+            "description": "Conflicting operation, unresolved evidence or unavailable runtime budget."
+          },
+          "503": {
+            "description": "Authority, storage or matching operator adapter unavailable."
+          }
+        }
+      }
+    },
+    "/v1/organizations/{organizationId}/persistent-boxes/{boxId}/close": {
+      "post": {
+        "operationId": "closePersistentBox",
+        "summary": "Close a hosted durable box through its pinned operator provider",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "Requires fresh JackAISaaS boxes.close authorization with boxfleet:boxes:write and exact organization/product/environment ownership. Cleanup remains available after a paid-feature downgrade. No body or query parameters are accepted. A serialized durable intention admits at most one provider deletion. Only a matching positive acknowledgement releases retained count and storage; runtime remains reserved and not-metered. Responses are private and not cacheable. The /api alias has the same authorization. An operator must configure the trusted provider adapter; this endpoint does not provision or activate providers.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "boxId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Closure is recorded; repeat requests return the same result without deleting again.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HostedPersistentBoxClose"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Closure is unconfirmed. Lost, late, negative or mismatched acknowledgements and failed receipt persistence retain reservations. Repeat requests never dispatch another deletion; operator reconciliation is required.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HostedPersistentBoxClose"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid UUID, body or query parameters."
+          },
+          "401": {
+            "description": "Missing or rejected product session."
+          },
+          "403": {
+            "description": "Current authority denied cleanup or the organization/product/environment differs."
+          },
+          "404": {
+            "description": "No durable box in this exact target scope."
+          },
+          "409": {
+            "description": "Unconfirmed or changed provider allocation requires operator reconciliation."
+          },
+          "503": {
+            "description": "Authority or storage unavailable, or no matching operator provider adapter. Missing configuration refuses before any close intention or deletion."
+          }
+        }
+      }
+    },
+    "/v1/organizations/{organizationId}/boxes": {
+      "get": {
+        "operationId": "listBoxes",
+        "summary": "List hosted boxes",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Needs the org.boxes entitlement.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stored boxes with their provider state"
+          }
+        }
+      },
+      "post": {
+        "operationId": "createBox",
+        "summary": "Create a hosted box",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. The box is created by the configured provider (E2B) and counts against the plan's concurrent-box limit, checked by the database (402 quota_exceeded). Without a provider: 503 provider_unavailable and nothing is recorded. The response carries the provider access token once; it is never stored. In managed-connected mode org.boxes must be explicitly true and concurrentBoxes must be supplied by the Hub as a nonnegative integer or -1. Missing or malformed quotas answer 402 quota_unavailable before provider creation.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Box running at the provider"
+          },
+          "402": {
+            "description": "Concurrent-box limit reached"
+          },
+          "502": {
+            "description": "The provider refused; recorded as failed"
+          },
+          "503": {
+            "description": "No provider or no storage"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "template": {
+                    "type": "string"
+                  },
+                  "timeoutSeconds": {
+                    "type": "integer",
+                    "minimum": 60,
+                    "maximum": 86400
+                  },
+                  "provider": {
+                    "type": "string",
+                    "enum": [
+                      "e2b"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/organizations/{organizationId}/boxes/{boxId}": {
+      "get": {
+        "operationId": "getBox",
+        "summary": "Read a hosted box",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "boxId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stored box"
+          },
+          "404": {
+            "description": "Unknown box"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "stopBox",
+        "summary": "Stop a hosted box",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Stops the box at the provider, then records it stopped.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "boxId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stopped"
+          },
+          "502": {
+            "description": "The provider refused; state unchanged"
+          }
+        }
+      }
+    },
+    "/v1/organizations/{organizationId}/entitlements": {
+      "get": {
+        "operationId": "getEntitlements",
+        "summary": "Organization entitlements and usage",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "Requires the entitlements.read operation on a JackAISaaS product session for this exact organization and environment. In managed-connected mode returns only Hub-sourced flags and quotas, plus observed local usage; no local catalog or Stripe fallback. Missing or unavailable Hub authority cannot grant access.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Entitlements and usage"
+          }
+        }
+      }
+    },
+    "/v1/organizations/{organizationId}/billing": {
+      "get": {
+        "operationId": "getBilling",
+        "summary": "Billing status",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Stripe test mode only (docs/BILLING.md); 503 billing_unavailable without a test key. The stored subscription, the entitlement source and this month's usage.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Billing status"
+          },
+          "409": {
+            "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl."
+          }
+        }
+      }
+    },
+    "/v1/organizations/{organizationId}/billing/checkout": {
+      "post": {
+        "operationId": "createCheckout",
+        "summary": "Start a subscription with Stripe Checkout",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Stripe test mode only (docs/BILLING.md); 503 billing_unavailable without a test key. Only plans the catalog has on sale (409 plan_not_on_sale); 409 subscription_exists when one already grants a plan.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "planKey"
+                ],
+                "properties": {
+                  "planKey": {
+                    "type": "string",
+                    "enum": [
+                      "pro",
+                      "team",
+                      "business"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "checkoutUrl of the Stripe Checkout Session"
+          },
+          "409": {
+            "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl. Autonomous mode: Plan not on sale or subscription exists"
+          }
+        }
+      }
+    },
+    "/v1/organizations/{organizationId}/billing/portal": {
+      "post": {
+        "operationId": "createBillingPortal",
+        "summary": "Open the Stripe customer portal",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Stripe test mode only (docs/BILLING.md); 503 billing_unavailable without a test key.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "portalUrl"
+          },
+          "404": {
+            "description": "No Stripe customer yet"
+          },
+          "409": {
+            "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl."
+          }
+        }
+      }
+    },
+    "/v1/organizations/{organizationId}/billing/invoices": {
+      "get": {
+        "operationId": "listInvoices",
+        "summary": "List the organization's invoices",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Stripe test mode only (docs/BILLING.md); 503 billing_unavailable without a test key. Only the organization's own Stripe invoices (hosted page and PDF links).",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invoices"
+          },
+          "409": {
+            "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl."
+          }
+        }
+      }
+    },
+    "/v1/billing/stripe/webhook": {
+      "post": {
+        "operationId": "stripeWebhook",
+        "summary": "Stripe webhook",
+        "security": [],
+        "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Authenticated by the Stripe-Signature header (HMAC-SHA256 with the endpoint secret, 5-minute tolerance); live-mode events are refused. Answers 503 billing_unavailable until the Stripe secrets are configured.",
+        "responses": {
+          "200": {
+            "description": "Received"
+          },
+          "400": {
+            "description": "Invalid signature or payload"
+          },
+          "409": {
+            "description": "Managed account authority required; use the returned JackAISaaS accountUrl or portalUrl."
+          }
+        }
+      }
+    },
+    "/v1/workspaces": {
+      "get": {
+        "operationId": "listHostedWorkspaces",
+        "summary": "List workspaces owned by the authorized tenant and product environment",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized workspace state or result"
+          },
+          "400": {
+            "description": "Invalid bounded request"
+          },
+          "401": {
+            "description": "Product session rejected"
+          },
+          "403": {
+            "description": "Operation or fleet policy denied"
+          },
+          "404": {
+            "description": "Resource not found in the authorized tenant and product environment"
+          },
+          "402": {
+            "description": "Hub entitlement or atomic quota denied"
+          },
+          "409": {
+            "description": "Idempotency conflict, incompatible state or cleanup unconfirmed"
+          },
+          "503": {
+            "description": "Operator provider, template, storage or authority unavailable"
+          }
+        }
+      },
+      "post": {
+        "operationId": "openHostedWorkspace",
+        "summary": "Open a finite hosted workspace under Hub rights, fleet policy and shared quotas",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized workspace state or result"
+          },
+          "400": {
+            "description": "Invalid bounded request"
+          },
+          "401": {
+            "description": "Product session rejected"
+          },
+          "403": {
+            "description": "Operation or fleet policy denied"
+          },
+          "404": {
+            "description": "Resource not found in the authorized tenant and product environment"
+          },
+          "402": {
+            "description": "Hub entitlement or atomic quota denied"
+          },
+          "409": {
+            "description": "Idempotency conflict, incompatible state or cleanup unconfirmed"
+          },
+          "503": {
+            "description": "Operator provider, template, storage or authority unavailable"
+          },
+          "201": {
+            "description": "Prepared workspace; source and provider allocation recorded durably"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "description": "Required here or in the idempotencyKey body field. Replays never allocate or execute again.",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "idempotencyKey": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "files": {
+                    "type": "array",
+                    "maxItems": 100,
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "path",
+                        "content"
+                      ],
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "maxLength": 1024,
+                          "description": "Canonical portable relative path; sensitive files, aliases and credentials are refused."
+                        },
+                        "content": {
+                          "type": "string",
+                          "format": "byte",
+                          "maxLength": 1398104,
+                          "description": "Canonical base64, at most 1 MiB decoded."
+                        }
+                      }
+                    },
+                    "description": "At most 8 MiB decoded total; omitted files create an empty workspace."
+                  },
+                  "template": {
+                    "type": "string",
+                    "description": "Must match the operator-configured BOXFLEET_WORKSPACE_TEMPLATE."
+                  },
+                  "timeoutSeconds": {
+                    "type": "integer",
+                    "minimum": 60,
+                    "maximum": 3600,
+                    "default": 300
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}": {
+      "get": {
+        "operationId": "getHostedWorkspace",
+        "summary": "Read durable workspace state",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized workspace state or result"
+          },
+          "400": {
+            "description": "Invalid bounded request"
+          },
+          "401": {
+            "description": "Product session rejected"
+          },
+          "403": {
+            "description": "Operation or fleet policy denied"
+          },
+          "404": {
+            "description": "Resource not found in the authorized tenant and product environment"
+          },
+          "402": {
+            "description": "Hub entitlement or atomic quota denied"
+          },
+          "409": {
+            "description": "Idempotency conflict, incompatible state or cleanup unconfirmed"
+          },
+          "503": {
+            "description": "Operator provider, template, storage or authority unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/source": {
+      "get": {
+        "operationId": "getHostedWorkspaceSource",
+        "summary": "Download the private initial source snapshot; unavailable after close or expiry",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized workspace state or result"
+          },
+          "400": {
+            "description": "Invalid bounded request"
+          },
+          "401": {
+            "description": "Product session rejected"
+          },
+          "403": {
+            "description": "Operation or fleet policy denied"
+          },
+          "404": {
+            "description": "Resource not found in the authorized tenant and product environment"
+          },
+          "402": {
+            "description": "Hub entitlement or atomic quota denied"
+          },
+          "409": {
+            "description": "Idempotency conflict, incompatible state or cleanup unconfirmed"
+          },
+          "503": {
+            "description": "Operator provider, template, storage or authority unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/run": {
+      "post": {
+        "operationId": "runHostedWorkspace",
+        "summary": "Execute once in the retained guest directory; ambiguous execution remains uncertain",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized workspace state or result"
+          },
+          "400": {
+            "description": "Invalid bounded request"
+          },
+          "401": {
+            "description": "Product session rejected"
+          },
+          "403": {
+            "description": "Operation or fleet policy denied"
+          },
+          "404": {
+            "description": "Resource not found in the authorized tenant and product environment"
+          },
+          "402": {
+            "description": "Hub entitlement or atomic quota denied"
+          },
+          "409": {
+            "description": "Idempotency conflict, incompatible state or cleanup unconfirmed"
+          },
+          "503": {
+            "description": "Operator provider, template, storage or authority unavailable"
+          },
+          "202": {
+            "description": "Running or uncertain operation; inspect or explicitly recover, never resend with a new key"
+          }
+        },
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "description": "Required here or in the idempotencyKey body field. Replays never allocate or execute again.",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "command"
+                ],
+                "properties": {
+                  "idempotencyKey": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "command": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 16384,
+                    "description": "Shell command; maximum 16 KiB UTF-8."
+                  },
+                  "timeoutSeconds": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 120,
+                    "default": 60
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/operations/{operationId}": {
+      "get": {
+        "operationId": "getHostedWorkspaceOperation",
+        "summary": "Read the bounded, redacted durable operation receipt",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized workspace state or result"
+          },
+          "400": {
+            "description": "Invalid bounded request"
+          },
+          "401": {
+            "description": "Product session rejected"
+          },
+          "403": {
+            "description": "Operation or fleet policy denied"
+          },
+          "404": {
+            "description": "Resource not found in the authorized tenant and product environment"
+          },
+          "402": {
+            "description": "Hub entitlement or atomic quota denied"
+          },
+          "409": {
+            "description": "Idempotency conflict, incompatible state or cleanup unconfirmed"
+          },
+          "503": {
+            "description": "Operator provider, template, storage or authority unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "operationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/v1/workspaces/{workspaceId}/recover": {
+      "post": {
+        "operationId": "recoverHostedWorkspace",
+        "summary": "Inspect a protected guest receipt without executing the command again",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized workspace state or result"
+          },
+          "400": {
+            "description": "Invalid bounded request"
+          },
+          "401": {
+            "description": "Product session rejected"
+          },
+          "403": {
+            "description": "Operation or fleet policy denied"
+          },
+          "404": {
+            "description": "Resource not found in the authorized tenant and product environment"
+          },
+          "402": {
+            "description": "Hub entitlement or atomic quota denied"
+          },
+          "409": {
+            "description": "Idempotency conflict, incompatible state or cleanup unconfirmed"
+          },
+          "503": {
+            "description": "Operator provider, template, storage or authority unavailable"
+          },
+          "202": {
+            "description": "No verified terminal receipt yet; workspace remains unavailable for new commands"
+          }
+        },
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "operationId"
+                ],
+                "properties": {
+                  "operationId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/close": {
+      "post": {
+        "operationId": "closeHostedWorkspace",
+        "summary": "Delete the owned provider box and private source; available after paid entitlement loss with current close authority",
+        "security": [
+          {
+            "productSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized workspace state or result"
+          },
+          "400": {
+            "description": "Invalid bounded request"
+          },
+          "401": {
+            "description": "Product session rejected"
+          },
+          "403": {
+            "description": "Operation or fleet policy denied"
+          },
+          "404": {
+            "description": "Resource not found in the authorized tenant and product environment"
+          },
+          "402": {
+            "description": "Hub entitlement or atomic quota denied"
+          },
+          "409": {
+            "description": "Idempotency conflict, incompatible state or cleanup unconfirmed"
+          },
+          "503": {
+            "description": "Operator provider, template, storage or authority unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

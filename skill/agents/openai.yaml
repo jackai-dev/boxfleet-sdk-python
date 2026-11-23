@@ -1,0 +1,4 @@
+interface:
+  display_name: "boxfleet_hosted_control_plane_boxfleet_io Library"
+  short_description: "Build confidently with boxfleet_hosted_control_plane_boxfleet_io"
+  default_prompt: "Use $use-boxfleet-hosted-control-plane-boxfleet-io to implement a correct boxfleet_hosted_control_plane_boxfleet_io integration."

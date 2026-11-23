@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "boxfleet-hosted-control-plane-boxfleet-io-python-sdk-mcp"
+version = "0.3.0"
+requires-python = ">=3.9"
+description = "MCP operation tools backed by a bundled generated Python SDK"
+readme = "README.md"
+dependencies = ["httpx>=0.24,<1", "typing_extensions>=4.2.0", "jsonschema>=4.18,<5"]
+
+[project.scripts]
+"boxfleet-hosted-control-plane-boxfleet-io-python-sdk-mcp" = "omniwrap_boxfleet_hosted_control_plane_boxfleet_io_mcp.server:main"
+
+[tool.setuptools]
+packages = ["omniwrap_boxfleet_hosted_control_plane_boxfleet_io_mcp", "omniwrap_mcp_e3fd4c744ae8_sdk", "omniwrap_mcp_e3fd4c744ae8_sdk.resources"]
+
+[tool.setuptools.package-dir]
+"omniwrap_boxfleet_hosted_control_plane_boxfleet_io_mcp" = "omniwrap_boxfleet_hosted_control_plane_boxfleet_io_mcp"
+"omniwrap_mcp_e3fd4c744ae8_sdk" = "_sdk/omniwrap-mcp-e3fd4c744ae8-sdk/omniwrap_mcp_e3fd4c744ae8_sdk"
+
+[tool.setuptools.package-data]
+"omniwrap_boxfleet_hosted_control_plane_boxfleet_io_mcp" = ["tool-map.json", "semantic-api.json", "docs-index.json"]
+"omniwrap_mcp_e3fd4c744ae8_sdk" = ["py.typed"]

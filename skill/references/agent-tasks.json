@@ -1,0 +1,1209 @@
+{
+  "$schema": "https://omniwrap.dev/schemas/semantic-agent-task-corpus/v1.json",
+  "contract_fingerprint": "e3fd4c744ae8933c0e0bd0c21a692897795a14657e577fb82108500d39f2ac8d",
+  "contract_title": "BoxFleet hosted control plane (boxfleet.io)",
+  "corpus_sha256": "af4beef7d06f6698e5d8fdfb9c6346732606854906d82d9e55d0bcd7712e697c",
+  "generation_profile": "semantic-retrieval-and-planning-v2",
+  "task_corpus_version": "1.0.0",
+  "tasks": [
+    {
+      "auth_ids": [
+        "productSession"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/productSession",
+        "omniwrap://semantic/operation/cancelJob"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Recover the exact authentication scheme, location or flow, and required scopes.",
+      "kind": "authentication",
+      "operation_ids": [
+        "cancelJob"
+      ],
+      "query": "How is productSession authentication applied to cancelJob? Cite exactly: operation:cancelJob, auth:productSession",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "authentication-canceljob-productsession"
+    },
+    {
+      "auth_ids": [
+        "adminToken"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/adminToken",
+        "omniwrap://semantic/operation/controlUser"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Recover the exact authentication scheme, location or flow, and required scopes.",
+      "kind": "authentication",
+      "operation_ids": [
+        "controlUser"
+      ],
+      "query": "How is adminToken authentication applied to controlUser? Cite exactly: operation:controlUser, auth:adminToken",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "authentication-controluser-admintoken"
+    },
+    {
+      "auth_ids": [
+        "productSession"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/productSession",
+        "omniwrap://semantic/operation/cancelJob"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Identify the operation without inventing a route or method.",
+      "kind": "discovery",
+      "operation_ids": [
+        "cancelJob"
+      ],
+      "query": "Find the exact operation cancelJob (POST /v1/jobs/{jobId}/cancel) for Cancel a job. Cite exactly: operation:cancelJob, auth:productSession",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "discovery-canceljob"
+    },
+    {
+      "auth_ids": [
+        "productSession"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/productSession",
+        "omniwrap://semantic/operation/closeHostedWorkspace"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Identify the operation without inventing a route or method.",
+      "kind": "discovery",
+      "operation_ids": [
+        "closeHostedWorkspace"
+      ],
+      "query": "Find the exact operation closeHostedWorkspace (POST /v1/workspaces/{workspaceId}/close) for Delete the owned provider box and private source; available after paid entitlement loss with current close authority. Cite exactly: operation:closeHostedWorkspace, auth:productSession",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "discovery-closehostedworkspace"
+    },
+    {
+      "auth_ids": [
+        "productSession"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/productSession",
+        "omniwrap://semantic/operation/closePersistentBox",
+        "omniwrap://semantic/schema/HostedPersistentBoxClose"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Identify the operation without inventing a route or method.",
+      "kind": "discovery",
+      "operation_ids": [
+        "closePersistentBox"
+      ],
+      "query": "Find the exact operation closePersistentBox (POST /v1/organizations/{organizationId}/persistent-boxes/{boxId}/close) for Close a hosted durable box through its pinned operator provider. Cite exactly: operation:closePersistentBox, schema:HostedPersistentBoxClose, auth:productSession",
+      "schema_ids": [
+        "HostedPersistentBoxClose"
+      ],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "discovery-closepersistentbox"
+    },
+    {
+      "auth_ids": [
+        "adminToken"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/adminToken",
+        "omniwrap://semantic/operation/controlUser"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Identify the operation without inventing a route or method.",
+      "kind": "discovery",
+      "operation_ids": [
+        "controlUser"
+      ],
+      "query": "Find the exact operation controlUser (POST /v1/admin/users) for Disable, ban, delete or re-enable a user. Cite exactly: operation:controlUser, auth:adminToken",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "discovery-controluser"
+    },
+    {
+      "auth_ids": [
+        "adminToken"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/adminToken",
+        "omniwrap://semantic/operation/getAdminPlans"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Identify the operation without inventing a route or method.",
+      "kind": "discovery",
+      "operation_ids": [
+        "getAdminPlans"
+      ],
+      "query": "Find the exact operation getAdminPlans (GET /v1/admin/plans) for Plan catalog with admin controls. Cite exactly: operation:getAdminPlans, auth:adminToken",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "discovery-getadminplans"
+    },
+    {
+      "auth_ids": [],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/operation/getAuthGate"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Identify the operation without inventing a route or method.",
+      "kind": "discovery",
+      "operation_ids": [
+        "getAuthGate"
+      ],
+      "query": "Find the exact operation getAuthGate (GET /v1/auth/gate) for Registration gate state and waitlist count. Cite exactly: operation:getAuthGate",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "discovery-getauthgate"
+    },
+    {
+      "auth_ids": [
+        "productSession"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/productSession",
+        "omniwrap://semantic/operation/listJobs"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Identify the operation without inventing a route or method.",
+      "kind": "discovery",
+      "operation_ids": [
+        "listJobs"
+      ],
+      "query": "Find the exact operation listJobs (GET /v1/jobs) for List the organization jobs. Cite exactly: operation:listJobs, auth:productSession",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "discovery-listjobs"
+    },
+    {
+      "auth_ids": [
+        "productSession"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/productSession",
+        "omniwrap://semantic/operation/provisionPersistentBox",
+        "omniwrap://semantic/schema/HostedPersistentBoxRead"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Identify the operation without inventing a route or method.",
+      "kind": "discovery",
+      "operation_ids": [
+        "provisionPersistentBox"
+      ],
+      "query": "Find the exact operation provisionPersistentBox (POST /v1/organizations/{organizationId}/persistent-boxes) for Provision a durable box from a configured operator offer. Cite exactly: operation:provisionPersistentBox, schema:HostedPersistentBoxRead, auth:productSession",
+      "schema_ids": [
+        "HostedPersistentBoxRead"
+      ],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "discovery-provisionpersistentbox"
+    },
+    {
+      "auth_ids": [
+        "adminToken"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/adminToken",
+        "omniwrap://semantic/operation/readTelemetry"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Identify the operation without inventing a route or method.",
+      "kind": "discovery",
+      "operation_ids": [
+        "readTelemetry"
+      ],
+      "query": "Find the exact operation readTelemetry (GET /v1/admin/telemetry) for Read opt-in telemetry events. Cite exactly: operation:readTelemetry, auth:adminToken",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "discovery-readtelemetry"
+    },
+    {
+      "auth_ids": [],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/operation/requestAccess"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Identify the operation without inventing a route or method.",
+      "kind": "discovery",
+      "operation_ids": [
+        "requestAccess"
+      ],
+      "query": "Find the exact operation requestAccess (POST /v1/waitlist) for Request beta access; one uniform answer, existing entries are never overwritten. Cite exactly: operation:requestAccess",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "discovery-requestaccess"
+    },
+    {
+      "auth_ids": [
+        "productSession"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/productSession",
+        "omniwrap://semantic/operation/startPersistentBox",
+        "omniwrap://semantic/schema/HostedPersistentBoxRead"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Identify the operation without inventing a route or method.",
+      "kind": "discovery",
+      "operation_ids": [
+        "startPersistentBox"
+      ],
+      "query": "Find the exact operation startPersistentBox (POST /v1/organizations/{organizationId}/persistent-boxes/{boxId}/start) for Start a retained hosted box. Cite exactly: operation:startPersistentBox, schema:HostedPersistentBoxRead, auth:productSession",
+      "schema_ids": [
+        "HostedPersistentBoxRead"
+      ],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "discovery-startpersistentbox"
+    },
+    {
+      "auth_ids": [
+        "productSession"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/productSession",
+        "omniwrap://semantic/operation/syncObservedBoxes",
+        "omniwrap://semantic/schema/ObservedBox"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Identify the operation without inventing a route or method.",
+      "kind": "discovery",
+      "operation_ids": [
+        "syncObservedBoxes"
+      ],
+      "query": "Find the exact operation syncObservedBoxes (POST /v1/organizations/{organizationId}/observed-boxes/sync) for Replace one actor-owned client observation snapshot. Cite exactly: operation:syncObservedBoxes, schema:ObservedBox, auth:productSession",
+      "schema_ids": [
+        "ObservedBox"
+      ],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "discovery-syncobservedboxes"
+    },
+    {
+      "auth_ids": [
+        "productSession"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/productSession",
+        "omniwrap://semantic/operation/closeHostedWorkspace"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Recover non-success response selectors and their declared error payloads.",
+      "kind": "error-recovery",
+      "operation_ids": [
+        "closeHostedWorkspace"
+      ],
+      "query": "Which failure responses and error schemas apply to closeHostedWorkspace? Cite exactly: operation:closeHostedWorkspace, auth:productSession",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "error-recovery-closehostedworkspace"
+    },
+    {
+      "auth_ids": [
+        "productSession"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/productSession",
+        "omniwrap://semantic/operation/closePersistentBox"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Recover non-success response selectors and their declared error payloads.",
+      "kind": "error-recovery",
+      "operation_ids": [
+        "closePersistentBox"
+      ],
+      "query": "Which failure responses and error schemas apply to closePersistentBox? Cite exactly: operation:closePersistentBox, auth:productSession",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "error-recovery-closepersistentbox"
+    },
+    {
+      "auth_ids": [
+        "adminToken"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/adminToken",
+        "omniwrap://semantic/operation/controlUser"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Recover non-success response selectors and their declared error payloads.",
+      "kind": "error-recovery",
+      "operation_ids": [
+        "controlUser"
+      ],
+      "query": "Which failure responses and error schemas apply to controlUser? Cite exactly: operation:controlUser, auth:adminToken",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "error-recovery-controluser"
+    },
+    {
+      "auth_ids": [
+        "adminToken"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/adminToken",
+        "omniwrap://semantic/operation/getAdminPlans"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Recover non-success response selectors and their declared error payloads.",
+      "kind": "error-recovery",
+      "operation_ids": [
+        "getAdminPlans"
+      ],
+      "query": "Which failure responses and error schemas apply to getAdminPlans? Cite exactly: operation:getAdminPlans, auth:adminToken",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "error-recovery-getadminplans"
+    },
+    {
+      "auth_ids": [
+        "productSession"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/productSession",
+        "omniwrap://semantic/operation/listJobs"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Recover non-success response selectors and their declared error payloads.",
+      "kind": "error-recovery",
+      "operation_ids": [
+        "listJobs"
+      ],
+      "query": "Which failure responses and error schemas apply to listJobs? Cite exactly: operation:listJobs, auth:productSession",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "error-recovery-listjobs"
+    },
+    {
+      "auth_ids": [
+        "productSession"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/productSession",
+        "omniwrap://semantic/operation/provisionPersistentBox"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Recover non-success response selectors and their declared error payloads.",
+      "kind": "error-recovery",
+      "operation_ids": [
+        "provisionPersistentBox"
+      ],
+      "query": "Which failure responses and error schemas apply to provisionPersistentBox? Cite exactly: operation:provisionPersistentBox, auth:productSession",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "error-recovery-provisionpersistentbox"
+    },
+    {
+      "auth_ids": [
+        "adminToken"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/adminToken",
+        "omniwrap://semantic/operation/readTelemetry"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Recover non-success response selectors and their declared error payloads.",
+      "kind": "error-recovery",
+      "operation_ids": [
+        "readTelemetry"
+      ],
+      "query": "Which failure responses and error schemas apply to readTelemetry? Cite exactly: operation:readTelemetry, auth:adminToken",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "error-recovery-readtelemetry"
+    },
+    {
+      "auth_ids": [],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/operation/requestAccess"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Recover non-success response selectors and their declared error payloads.",
+      "kind": "error-recovery",
+      "operation_ids": [
+        "requestAccess"
+      ],
+      "query": "Which failure responses and error schemas apply to requestAccess? Cite exactly: operation:requestAccess",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "error-recovery-requestaccess"
+    },
+    {
+      "auth_ids": [
+        "productSession"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/productSession",
+        "omniwrap://semantic/operation/cancelJob"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Recover exact wire parameters, request media, responses, and safety traits.",
+      "kind": "integration",
+      "operation_ids": [
+        "cancelJob"
+      ],
+      "query": "Plan a correct SDK integration for cancelJob (POST /v1/jobs/{jobId}/cancel). Cite exactly: operation:cancelJob, auth:productSession",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "integration-canceljob"
+    },
+    {
+      "auth_ids": [
+        "productSession"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/productSession",
+        "omniwrap://semantic/operation/closeHostedWorkspace"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Recover exact wire parameters, request media, responses, and safety traits.",
+      "kind": "integration",
+      "operation_ids": [
+        "closeHostedWorkspace"
+      ],
+      "query": "Plan a correct SDK integration for closeHostedWorkspace (POST /v1/workspaces/{workspaceId}/close). Cite exactly: operation:closeHostedWorkspace, auth:productSession",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "integration-closehostedworkspace"
+    },
+    {
+      "auth_ids": [
+        "productSession"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/productSession",
+        "omniwrap://semantic/operation/closePersistentBox",
+        "omniwrap://semantic/schema/HostedPersistentBoxClose"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Recover exact wire parameters, request media, responses, and safety traits.",
+      "kind": "integration",
+      "operation_ids": [
+        "closePersistentBox"
+      ],
+      "query": "Plan a correct SDK integration for closePersistentBox (POST /v1/organizations/{organizationId}/persistent-boxes/{boxId}/close). Cite exactly: operation:closePersistentBox, schema:HostedPersistentBoxClose, auth:productSession",
+      "schema_ids": [
+        "HostedPersistentBoxClose"
+      ],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "integration-closepersistentbox"
+    },
+    {
+      "auth_ids": [
+        "adminToken"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/adminToken",
+        "omniwrap://semantic/operation/controlUser"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Recover exact wire parameters, request media, responses, and safety traits.",
+      "kind": "integration",
+      "operation_ids": [
+        "controlUser"
+      ],
+      "query": "Plan a correct SDK integration for controlUser (POST /v1/admin/users). Cite exactly: operation:controlUser, auth:adminToken",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "integration-controluser"
+    },
+    {
+      "auth_ids": [
+        "adminToken"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/adminToken",
+        "omniwrap://semantic/operation/getAdminPlans"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Recover exact wire parameters, request media, responses, and safety traits.",
+      "kind": "integration",
+      "operation_ids": [
+        "getAdminPlans"
+      ],
+      "query": "Plan a correct SDK integration for getAdminPlans (GET /v1/admin/plans). Cite exactly: operation:getAdminPlans, auth:adminToken",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "integration-getadminplans"
+    },
+    {
+      "auth_ids": [],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/operation/getAuthGate"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Recover exact wire parameters, request media, responses, and safety traits.",
+      "kind": "integration",
+      "operation_ids": [
+        "getAuthGate"
+      ],
+      "query": "Plan a correct SDK integration for getAuthGate (GET /v1/auth/gate). Cite exactly: operation:getAuthGate",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "integration-getauthgate"
+    },
+    {
+      "auth_ids": [
+        "productSession"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/productSession",
+        "omniwrap://semantic/operation/listJobs"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Recover exact wire parameters, request media, responses, and safety traits.",
+      "kind": "integration",
+      "operation_ids": [
+        "listJobs"
+      ],
+      "query": "Plan a correct SDK integration for listJobs (GET /v1/jobs). Cite exactly: operation:listJobs, auth:productSession",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "integration-listjobs"
+    },
+    {
+      "auth_ids": [
+        "productSession"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/productSession",
+        "omniwrap://semantic/operation/provisionPersistentBox",
+        "omniwrap://semantic/schema/HostedPersistentBoxRead"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Recover exact wire parameters, request media, responses, and safety traits.",
+      "kind": "integration",
+      "operation_ids": [
+        "provisionPersistentBox"
+      ],
+      "query": "Plan a correct SDK integration for provisionPersistentBox (POST /v1/organizations/{organizationId}/persistent-boxes). Cite exactly: operation:provisionPersistentBox, schema:HostedPersistentBoxRead, auth:productSession",
+      "schema_ids": [
+        "HostedPersistentBoxRead"
+      ],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "integration-provisionpersistentbox"
+    },
+    {
+      "auth_ids": [
+        "adminToken"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/adminToken",
+        "omniwrap://semantic/operation/readTelemetry"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Recover exact wire parameters, request media, responses, and safety traits.",
+      "kind": "integration",
+      "operation_ids": [
+        "readTelemetry"
+      ],
+      "query": "Plan a correct SDK integration for readTelemetry (GET /v1/admin/telemetry). Cite exactly: operation:readTelemetry, auth:adminToken",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "integration-readtelemetry"
+    },
+    {
+      "auth_ids": [],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/operation/requestAccess"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Recover exact wire parameters, request media, responses, and safety traits.",
+      "kind": "integration",
+      "operation_ids": [
+        "requestAccess"
+      ],
+      "query": "Plan a correct SDK integration for requestAccess (POST /v1/waitlist). Cite exactly: operation:requestAccess",
+      "schema_ids": [],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "integration-requestaccess"
+    },
+    {
+      "auth_ids": [
+        "productSession"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/productSession",
+        "omniwrap://semantic/operation/startPersistentBox",
+        "omniwrap://semantic/schema/HostedPersistentBoxRead"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Recover exact wire parameters, request media, responses, and safety traits.",
+      "kind": "integration",
+      "operation_ids": [
+        "startPersistentBox"
+      ],
+      "query": "Plan a correct SDK integration for startPersistentBox (POST /v1/organizations/{organizationId}/persistent-boxes/{boxId}/start). Cite exactly: operation:startPersistentBox, schema:HostedPersistentBoxRead, auth:productSession",
+      "schema_ids": [
+        "HostedPersistentBoxRead"
+      ],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "integration-startpersistentbox"
+    },
+    {
+      "auth_ids": [
+        "productSession"
+      ],
+      "budgets": {
+        "max_context_bytes": 8192,
+        "max_results": 5,
+        "max_tool_calls": 3
+      },
+      "citation_uris": [
+        "omniwrap://semantic/auth/productSession",
+        "omniwrap://semantic/operation/syncObservedBoxes",
+        "omniwrap://semantic/schema/ObservedBox"
+      ],
+      "forbidden_actions": [
+        "execute-target-code",
+        "expose-secret",
+        "invent-api-surface",
+        "mutate-remote-state",
+        "network-request"
+      ],
+      "intent": "Recover exact wire parameters, request media, responses, and safety traits.",
+      "kind": "integration",
+      "operation_ids": [
+        "syncObservedBoxes"
+      ],
+      "query": "Plan a correct SDK integration for syncObservedBoxes (POST /v1/organizations/{organizationId}/observed-boxes/sync). Cite exactly: operation:syncObservedBoxes, schema:ObservedBox, auth:productSession",
+      "schema_ids": [
+        "ObservedBox"
+      ],
+      "success_criteria": [
+        "return the expected entity identifiers",
+        "cite only resolvable OmniWrap resources",
+        "stay within the declared result, context, and tool-call budgets",
+        "perform none of the forbidden actions"
+      ],
+      "task_id": "integration-syncobservedboxes"
+    }
+  ]
+}

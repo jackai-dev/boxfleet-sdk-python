@@ -1,0 +1,1332 @@
+{
+  "authentication": {
+    "details": [
+      {
+        "name": "adminToken",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      {
+        "name": "licenseToken",
+        "scheme": "header",
+        "type": "apiKey"
+      },
+      {
+        "name": "productSession",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    ],
+    "schemes": [
+      "bearer",
+      "header",
+      "bearer"
+    ]
+  },
+  "capabilities": {
+    "pushNotifications": false,
+    "stateTransitionHistory": true,
+    "streaming": true
+  },
+  "defaultInputModes": [
+    "application/json"
+  ],
+  "defaultOutputModes": [
+    "application/json"
+  ],
+  "description": "Routes served by the boxfleet.io Worker. Default managed-connected deployments use JackAISaaS as the account, membership, subscription and billing authority. Product sessions must match the exact product, environment and organization. Managed features require explicit Hub entitlements and valid Hub quotas; neither local Stripe subscriptions nor local plan defaults can grant missing rights. Local issuer, plan mutations, membership mutations and Stripe billing routes are available only in explicitly selected autonomous modes; managed mode returns 409 account_authority_required with Hub account and portal URLs. Historical administrative reads are marked nonauthoritative. Job and organization records use PostgreSQL; missing storage answers 503. Hosted boxes need a configured provider. Hosted /v1/workspaces use tenant/product/environment ownership from current JackAISaaS product sessions, PostgreSQL lifecycle receipts and private source snapshots. Their finite lifetime is distinct from permanent VMs. Local CLI/MCP workspaces and synchronization remain separate workstation operations described in boxfleet.openapi.yaml. Removed simulation routes remain unavailable. tests/openapi-contract.test.mjs checks the complete route set in federated-autonomous mode; tests/account-authority.test.mjs checks managed refusals.",
+  "name": "BoxFleet hosted control plane (boxfleet.io)",
+  "schemaVersion": "1.0.0",
+  "skills": [
+    {
+      "description": "Requires a JackAISaaS product session. Answers 503 execution_api_unavailable until production storage is configured.",
+      "effect": "write",
+      "id": "cancelJob",
+      "idempotent": false,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "db766e35ba4f385faeb9949abf6f00a67d9551ccc6855e4a9410dc8fb1c75676",
+      "method": "POST",
+      "name": "Cancel a job",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "3d6c1b6ad0cedf5df582e6d43ff1716bc8e259ed88c0700808255dd62a14594a",
+      "path": "/v1/jobs/{jobId}/cancel",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "non-idempotent",
+        "method:POST"
+      ]
+    },
+    {
+      "description": "Delete the owned provider box and private source; available after paid entitlement loss with current close authority",
+      "effect": "write",
+      "id": "closeHostedWorkspace",
+      "idempotent": false,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "58172a978c48cffcc989cd69d4cafb5935b9fa28dc0b66245b37ac993634412b",
+      "method": "POST",
+      "name": "Delete the owned provider box and private source; available after paid entitlement loss with current close authority",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "b6c56f08dfc734f3e4dd1e3ce176b94da81568b8c07a570ee235264aa4f8b97a",
+      "path": "/v1/workspaces/{workspaceId}/close",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "non-idempotent",
+        "method:POST"
+      ]
+    },
+    {
+      "description": "Requires fresh JackAISaaS boxes.close authorization with boxfleet:boxes:write and exact organization/product/environment ownership. Cleanup remains available after a paid-feature downgrade. No body or query parameters are accepted. A serialized durable intention admits at most one provider deletion. Only a matching positive acknowledgement releases retained count and storage; runtime remains reserved and not-metered. Responses are private and not cacheable. The /api alias has the same authorization. An operator must configure the trusted provider adapter; this endpoint does not provision or activate providers.",
+      "effect": "write",
+      "id": "closePersistentBox",
+      "idempotent": false,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "688a7839823600f07960e1ba05ae15eec2cad03d11f4c3af68c8284af134e42f",
+      "method": "POST",
+      "name": "Close a hosted durable box through its pinned operator provider",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "e8d81b71fafbb2a5a67fd76510b8fb28cf29a4636d0ffcafe21547ebb74704a3",
+      "path": "/v1/organizations/{organizationId}/persistent-boxes/{boxId}/close",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "non-idempotent",
+        "method:POST"
+      ]
+    },
+    {
+      "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode.",
+      "effect": "write",
+      "id": "controlUser",
+      "idempotent": false,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "b1f38984e19088c47a5f387b4111ab7ef57eea03ab7271c338168e8225855314",
+      "method": "POST",
+      "name": "Disable, ban, delete or re-enable a user",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "706514cc2ee68db3c975d7bca16293917f830daac281e82d4f57be8da673b3a0",
+      "path": "/v1/admin/users",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "non-idempotent",
+        "method:POST"
+      ]
+    },
+    {
+      "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Stripe test mode only (docs/BILLING.md); 503 billing_unavailable without a test key.",
+      "effect": "write",
+      "id": "createBillingPortal",
+      "idempotent": false,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "2572b0f125136a8e051f4b832c65e22665354df3aca5a5c34af5269162d7c18c",
+      "method": "POST",
+      "name": "Open the Stripe customer portal",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "184cd4e1a97e4159ac13dcab5bb2cd8993ce2276eba046a6f83283d1be202757",
+      "path": "/v1/organizations/{organizationId}/billing/portal",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "non-idempotent",
+        "method:POST"
+      ]
+    },
+    {
+      "description": "Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. The box is created by the configured provider (E2B) and counts against the plan's concurrent-box limit, checked by the database (402 quota_exceeded). Without a provider: 503 provider_unavailable and nothing is recorded. The response carries the provider access token once; it is never stored. In managed-connected mode org.boxes must be explicitly true and concurrentBoxes must be supplied by the Hub as a nonnegative integer or -1. Missing or malformed quotas answer 402 quota_unavailable before provider creation.",
+      "effect": "write",
+      "id": "createBox",
+      "idempotent": false,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "c5d430037d74d4751f52b3ec4bedfab11f577e8df8b7b98b367e50dfef119a9e",
+      "method": "POST",
+      "name": "Create a hosted box",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "f868b9f00683826c49e85fa35bccad4d8a958d35105695496eae34c0957822a0",
+      "path": "/v1/organizations/{organizationId}/boxes",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "non-idempotent",
+        "method:POST"
+      ]
+    },
+    {
+      "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Stripe test mode only (docs/BILLING.md); 503 billing_unavailable without a test key. Only plans the catalog has on sale (409 plan_not_on_sale); 409 subscription_exists when one already grants a plan.",
+      "effect": "write",
+      "id": "createCheckout",
+      "idempotent": false,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "093578cfa34cf6be388ceda316329fb355a01d0151f536142c92500a6551b7d4",
+      "method": "POST",
+      "name": "Start a subscription with Stripe Checkout",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "0b0c8d014c9e37ce9a5fd2b87e660ddfcb4dd5aaebf204d7d575cc441e570cfe",
+      "path": "/v1/organizations/{organizationId}/billing/checkout",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "non-idempotent",
+        "method:POST"
+      ]
+    },
+    {
+      "description": "Account authority configuration (non-secret)",
+      "effect": "read",
+      "id": "getAccountsConfig",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "c7c69ffea7e3e6af99994c9347a2f29c4a558bdf8854ac3b61df817cbadcd1f7",
+      "method": "GET",
+      "name": "Account authority configuration (non-secret)",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "3d6c1b6ad0cedf5df582e6d43ff1716bc8e259ed88c0700808255dd62a14594a",
+      "path": "/v1/accounts/config",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "In managed-connected mode these local records are historical, with authoritative:false and authority:local-history; they do not grant account roles or entitlements.",
+      "effect": "read",
+      "id": "getAdminConsole",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "c7c69ffea7e3e6af99994c9347a2f29c4a558bdf8854ac3b61df817cbadcd1f7",
+      "method": "GET",
+      "name": "Super-admin JSON console",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "bcb8e3eedaf88cce66b205aadeed9274ee750b04cb0b0683aac2df16ca147eae",
+      "path": "/v1/admin/console",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "In managed-connected mode these local records are historical, with authoritative:false and authority:local-history; they do not grant account roles or entitlements.",
+      "effect": "read",
+      "id": "getAdminPlans",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "c7c69ffea7e3e6af99994c9347a2f29c4a558bdf8854ac3b61df817cbadcd1f7",
+      "method": "GET",
+      "name": "Plan catalog with admin controls",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "ffc7b7f39dbc3cfa0ebe489bfb63d0d3829f4bc0f0adb2d39b19d3e2b803a8c2",
+      "path": "/v1/admin/plans",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "Managed mode reports JackAISaaS account authority and local registration disabled. Autonomous modes report their local registration gate.",
+      "effect": "read",
+      "id": "getAuthGate",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "c7c69ffea7e3e6af99994c9347a2f29c4a558bdf8854ac3b61df817cbadcd1f7",
+      "method": "GET",
+      "name": "Registration gate state and waitlist count",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "3d6c1b6ad0cedf5df582e6d43ff1716bc8e259ed88c0700808255dd62a14594a",
+      "path": "/v1/auth/gate",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Stripe test mode only (docs/BILLING.md); 503 billing_unavailable without a test key. The stored subscription, the entitlement source and this month's usage.",
+      "effect": "read",
+      "id": "getBilling",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "2572b0f125136a8e051f4b832c65e22665354df3aca5a5c34af5269162d7c18c",
+      "method": "GET",
+      "name": "Billing status",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "14de51cc19e30d31d43acc41d6b68b98096b6acd30f8dcbe075520d8afc381f4",
+      "path": "/v1/organizations/{organizationId}/billing",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured.",
+      "effect": "read",
+      "id": "getBox",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "688a7839823600f07960e1ba05ae15eec2cad03d11f4c3af68c8284af134e42f",
+      "method": "GET",
+      "name": "Read a hosted box",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "fb5d49a0b9f297655c7afdc03085ce5d15f52619ca40f0b77ea5ed4e5bbe1fb5",
+      "path": "/v1/organizations/{organizationId}/boxes/{boxId}",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "Requires the entitlements.read operation on a JackAISaaS product session for this exact organization and environment. In managed-connected mode returns only Hub-sourced flags and quotas, plus observed local usage; no local catalog or Stripe fallback. Missing or unavailable Hub authority cannot grant access.",
+      "effect": "read",
+      "id": "getEntitlements",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "2572b0f125136a8e051f4b832c65e22665354df3aca5a5c34af5269162d7c18c",
+      "method": "GET",
+      "name": "Organization entitlements and usage",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "13bd4a99b24384399181760940b042bba64fb12babdbf1a500f4315d83eeb71f",
+      "path": "/v1/organizations/{organizationId}/entitlements",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Needs the org.fleet entitlement. Members, boxes, policy and usage from storage.",
+      "effect": "read",
+      "id": "getFleet",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "2572b0f125136a8e051f4b832c65e22665354df3aca5a5c34af5269162d7c18c",
+      "method": "GET",
+      "name": "Organization fleet view",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "5e5ae4af4f8f3a5cab86a52369f8087f864ecfacf33adc956f4571d8efbc4b3c",
+      "path": "/v1/organizations/{organizationId}/fleet",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. The policy is the stored one or the documented default (source tells which).",
+      "effect": "read",
+      "id": "getFleetPolicy",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "2572b0f125136a8e051f4b832c65e22665354df3aca5a5c34af5269162d7c18c",
+      "method": "GET",
+      "name": "Read the fleet policy",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "7547ccea6f12ff4440783d9ec21a50907879aa009addc82b02c64d6337bb2f68",
+      "path": "/v1/organizations/{organizationId}/fleet/policy",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "Control-plane health, storage readiness and registration mode",
+      "effect": "read",
+      "id": "getHealth",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "c7c69ffea7e3e6af99994c9347a2f29c4a558bdf8854ac3b61df817cbadcd1f7",
+      "method": "GET",
+      "name": "Control-plane health, storage readiness and registration mode",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "3d6c1b6ad0cedf5df582e6d43ff1716bc8e259ed88c0700808255dd62a14594a",
+      "path": "/health",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "Read durable workspace state",
+      "effect": "read",
+      "id": "getHostedWorkspace",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "58172a978c48cffcc989cd69d4cafb5935b9fa28dc0b66245b37ac993634412b",
+      "method": "GET",
+      "name": "Read durable workspace state",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "b6c56f08dfc734f3e4dd1e3ce176b94da81568b8c07a570ee235264aa4f8b97a",
+      "path": "/v1/workspaces/{workspaceId}",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "Read the bounded, redacted durable operation receipt",
+      "effect": "read",
+      "id": "getHostedWorkspaceOperation",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "e9d480cb4dcc44b6b9e04783d24ec59366cafc08566b08bd0a0b18d5b1f6df23",
+      "method": "GET",
+      "name": "Read the bounded, redacted durable operation receipt",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "b6c56f08dfc734f3e4dd1e3ce176b94da81568b8c07a570ee235264aa4f8b97a",
+      "path": "/v1/workspaces/{workspaceId}/operations/{operationId}",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "Download the private initial source snapshot; unavailable after close or expiry",
+      "effect": "read",
+      "id": "getHostedWorkspaceSource",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "58172a978c48cffcc989cd69d4cafb5935b9fa28dc0b66245b37ac993634412b",
+      "method": "GET",
+      "name": "Download the private initial source snapshot; unavailable after close or expiry",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "b6c56f08dfc734f3e4dd1e3ce176b94da81568b8c07a570ee235264aa4f8b97a",
+      "path": "/v1/workspaces/{workspaceId}/source",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "Requires a JackAISaaS product session. Answers 503 execution_api_unavailable until production storage is configured.",
+      "effect": "read",
+      "id": "getJob",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "db766e35ba4f385faeb9949abf6f00a67d9551ccc6855e4a9410dc8fb1c75676",
+      "method": "GET",
+      "name": "Get one job in organization scope",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "3d6c1b6ad0cedf5df582e6d43ff1716bc8e259ed88c0700808255dd62a14594a",
+      "path": "/v1/jobs/{jobId}",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "Requires fresh JackAISaaS boxes.read authorization and exact organization/product/environment ownership. Reads remain available after a paid-feature downgrade. The result is a stored observation with a reserved runtime budget, not measured consumption or provider availability. An uncertain item may include reconciliationOperationId after an exact scoped lifecycle-intention lookup, allowing recovery if the prior mutation response was lost; the collection never includes it. The handle does not confirm dispatch or remove the mutation fence, and POST reconcile still requires boxes.close. No credentials, configuration fingerprints, provider identifiers or deletion receipts are exposed. No query parameters or mutations are accepted.",
+      "effect": "read",
+      "id": "getPersistentBox",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "688a7839823600f07960e1ba05ae15eec2cad03d11f4c3af68c8284af134e42f",
+      "method": "GET",
+      "name": "Read one hosted durable box record and its latest runtime reservation",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "14f7d7f48e704cd0dcb420ebad218e125de12948a171a0db491ec72f5d1db9a6",
+      "path": "/v1/organizations/{organizationId}/persistent-boxes/{boxId}",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "Requires fresh JackAISaaS boxes.read authority and exact organization/product/environment ownership. from and to are canonical UTC instants, at most 31 days apart and not in the future. The two meters distinguish measured runtime from retained allocated storage. Partial or unknown coverage has null quantity and knownQuantity is only an observed subtotal. No provider receipt, price, billing event or reservation release is exposed. GET and HEAD are private and not cacheable; the /api alias has the same contract.",
+      "effect": "read",
+      "id": "getPersistentBoxProviderUsage",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "daa3895fd26c426bde35554b01299848d3ac57d3cf9e688e876bef8b2b753493",
+      "method": "GET",
+      "name": "Read scoped provider usage evidence for one hosted durable box",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "cf5bf014488f81ad7a2a91e86790718183fe240288465017f4bac11adf66a5a8",
+      "path": "/v1/organizations/{organizationId}/persistent-boxes/{boxId}/usage",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode.",
+      "effect": "read",
+      "id": "getPlans",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "c7c69ffea7e3e6af99994c9347a2f29c4a558bdf8854ac3b61df817cbadcd1f7",
+      "method": "GET",
+      "name": "Public plan catalog status",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "179cdc39cf6de23f6d973e3dc1ec3c956c009504724be77211789907361c7d43",
+      "path": "/v1/plans",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode.",
+      "effect": "write",
+      "id": "ingestTelemetry",
+      "idempotent": false,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "b1f38984e19088c47a5f387b4111ab7ef57eea03ab7271c338168e8225855314",
+      "method": "POST",
+      "name": "Opt-in usage event (allowlisted fields only, 8 KiB limit)",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "a9cc9e8e71e0d069eeb6e35974b4a8c512c9f1ee753c3c1bd692eaff3281f696",
+      "path": "/v1/telemetry/ingest",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "non-idempotent",
+        "method:POST"
+      ]
+    },
+    {
+      "description": "Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Needs the org.boxes entitlement.",
+      "effect": "read",
+      "id": "listBoxes",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "2572b0f125136a8e051f4b832c65e22665354df3aca5a5c34af5269162d7c18c",
+      "method": "GET",
+      "name": "List hosted boxes",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "e402c0ba22d1980a91828a0a03941d87101be408ff2e554839defa3d7b88e3ec",
+      "path": "/v1/organizations/{organizationId}/boxes",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "List workspaces owned by the authorized tenant and product environment",
+      "effect": "read",
+      "id": "listHostedWorkspaces",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "c7c69ffea7e3e6af99994c9347a2f29c4a558bdf8854ac3b61df817cbadcd1f7",
+      "method": "GET",
+      "name": "List workspaces owned by the authorized tenant and product environment",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "b6c56f08dfc734f3e4dd1e3ce176b94da81568b8c07a570ee235264aa4f8b97a",
+      "path": "/v1/workspaces",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Stripe test mode only (docs/BILLING.md); 503 billing_unavailable without a test key. Only the organization's own Stripe invoices (hosted page and PDF links).",
+      "effect": "read",
+      "id": "listInvoices",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "2572b0f125136a8e051f4b832c65e22665354df3aca5a5c34af5269162d7c18c",
+      "method": "GET",
+      "name": "List the organization's invoices",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "0ff4d96973bc819bebe2b85d90fa1a52afc825f689deda771bbe57b19b25618d",
+      "path": "/v1/organizations/{organizationId}/billing/invoices",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "Requires a JackAISaaS product session. Answers 503 execution_api_unavailable until production storage is configured.",
+      "effect": "read",
+      "id": "listJobEvents",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "db766e35ba4f385faeb9949abf6f00a67d9551ccc6855e4a9410dc8fb1c75676",
+      "method": "GET",
+      "name": "List job events",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "3d6c1b6ad0cedf5df582e6d43ff1716bc8e259ed88c0700808255dd62a14594a",
+      "path": "/v1/jobs/{jobId}/events",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "Requires a JackAISaaS product session. Answers 503 execution_api_unavailable until production storage is configured.",
+      "effect": "read",
+      "id": "listJobs",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "c7c69ffea7e3e6af99994c9347a2f29c4a558bdf8854ac3b61df817cbadcd1f7",
+      "method": "GET",
+      "name": "List the organization jobs",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "0353a12f00385b62d1d54466b0f1f26efd22a8212ee67f012e982eda69dd48e3",
+      "path": "/v1/jobs",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Needs the org.members entitlement. In managed-connected mode these local records are historical, with authoritative:false and authority:local-history; they do not grant account roles or entitlements.",
+      "effect": "read",
+      "id": "listMembers",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "2572b0f125136a8e051f4b832c65e22665354df3aca5a5c34af5269162d7c18c",
+      "method": "GET",
+      "name": "List organization members",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "b1ec254e11ef8ffe146d89b284027ac78e257d1beebfd0c1c01dee83d82ebdef",
+      "path": "/v1/organizations/{organizationId}/members",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "Requires current boxes.read product-session authorization for this exact organization. These are time-limited client reports, separate from hosted provider authority, billable usage and current Hub membership. No query parameters are accepted.",
+      "effect": "read",
+      "id": "listObservedBoxes",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "2572b0f125136a8e051f4b832c65e22665354df3aca5a5c34af5269162d7c18c",
+      "method": "GET",
+      "name": "List client-reported local and provider box snapshots",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "8d9099bc2a8df9d72eefd64eac2289402504078b0d4570f86d8c6ab9d9c29fe7",
+      "path": "/v1/organizations/{organizationId}/observed-boxes",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "Fresh boxes.read authorization is required. Returns configured offer IDs, provider names, templates and allocated storage. This is not a provider account probe or live capacity promise. No query parameters are accepted. Credentials and routing fingerprints stay private.",
+      "effect": "read",
+      "id": "listPersistentBoxOffers",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "2572b0f125136a8e051f4b832c65e22665354df3aca5a5c34af5269162d7c18c",
+      "method": "GET",
+      "name": "List operator-installed durable offers",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "0c908330ba4d19b575718702fd2f3b25a7f4b0b7e107ac95dbe7e4a214f79a91",
+      "path": "/v1/organizations/{organizationId}/persistent-boxes/offers",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "Requires fresh JackAISaaS boxes.read authorization for this exact organization, product and deployment environment. No paid-feature entitlement is required for these reads. Returns recent stored records only, with no provider call, provisioning or billing. Configuration fingerprints, provider identifiers, receipts and access credentials are omitted. Runtime remains not-metered. HEAD and the /api alias have the same authorization.",
+      "effect": "read",
+      "id": "listPersistentBoxes",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "31c332d2765eabf2ccc3976ab13b5163d2a2bacb47e79d86bb17ecc0b08b4ac4",
+      "method": "GET",
+      "name": "Read recent hosted durable box records",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "d731310410f46e07b0488e1f26ec73826bbb28c8e5ae367deb5c8faca9c5d6c1",
+      "path": "/v1/organizations/{organizationId}/persistent-boxes",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "In managed-connected mode these local records are historical, with authoritative:false and authority:local-history; they do not grant account roles or entitlements.",
+      "effect": "read",
+      "id": "listUsers",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "c7c69ffea7e3e6af99994c9347a2f29c4a558bdf8854ac3b61df817cbadcd1f7",
+      "method": "GET",
+      "name": "List registered and revoked users",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "8c346fc796a551da23e00efb7c0bc5195a50cd7215eae860d64ae7a867df3de0",
+      "path": "/v1/admin/users",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "Export access requests as JSON or CSV (?format=csv)",
+      "effect": "read",
+      "id": "listWaitlist",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "c7c69ffea7e3e6af99994c9347a2f29c4a558bdf8854ac3b61df817cbadcd1f7",
+      "method": "GET",
+      "name": "Export access requests as JSON or CSV (?format=csv)",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "8806dc5348fef528bf94a8c63047c1ffbda55b879700eb1efd26f3fad2d2a173",
+      "path": "/v1/waitlist",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "Open a finite hosted workspace under Hub rights, fleet policy and shared quotas",
+      "effect": "write",
+      "id": "openHostedWorkspace",
+      "idempotent": false,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "21bade69353e643a9be09c3da57f2140e6bedcaec4d9aba10b2158e14ff1e0eb",
+      "method": "POST",
+      "name": "Open a finite hosted workspace under Hub rights, fleet policy and shared quotas",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "e8f4c0b43a90f32458e44f34545246b31942693467723322045fbaf622952ef8",
+      "path": "/v1/workspaces",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "non-idempotent",
+        "method:POST"
+      ]
+    },
+    {
+      "description": "Requires current JackAISaaS boxes.persistent.write authorization, org.boxes and org.persistent-boxes, and explicit bounded shared/durable allowances. The operator pins the provider, template and allocated storage. Runtime enforcement must be independently armed and recorded before allocation. An idempotency key is required in the header or body; if both are supplied they must match. A committed reservation dispatches create at most once; subsequent requests only observe it, including after server restart or a lost response. Minutes remain reserved and not-metered. No query parameters are accepted. Responses are private and not cacheable. The /api alias has the same contract. No production provider or runtime enforcer is configured by default.",
+      "effect": "write",
+      "id": "provisionPersistentBox",
+      "idempotent": false,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "70a3a0eccf859cb3d35c32a0385ebe8b7ea9aed48d66bdbf74c814206d2f1f03",
+      "method": "POST",
+      "name": "Provision a durable box from a configured operator offer",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "88392f60b7a1e417c7c4599bf344fedc2c88fc4682bec5a6f6c06ac4ed2244b2",
+      "path": "/v1/organizations/{organizationId}/persistent-boxes",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "non-idempotent",
+        "method:POST"
+      ]
+    },
+    {
+      "description": "Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Only rules the control plane enforces are accepted; unknown fields answer 400.",
+      "effect": "write",
+      "id": "putFleetPolicy",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "4fab785cbd4888645d24ca3b1251ede6f5959b9532d944f2254334b2c3f14e58",
+      "method": "PUT",
+      "name": "Update the fleet policy",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "19dcb2fd12701d749ecb94d0d266ca31888c59cb3b628f84488d5b525c942898",
+      "path": "/v1/organizations/{organizationId}/fleet/policy",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "idempotent",
+        "method:PUT"
+      ]
+    },
+    {
+      "description": "Read opt-in telemetry events",
+      "effect": "read",
+      "id": "readTelemetry",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "c7c69ffea7e3e6af99994c9347a2f29c4a558bdf8854ac3b61df817cbadcd1f7",
+      "method": "GET",
+      "name": "Read opt-in telemetry events",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "39438908931c027d634023e6a7e2d5db2bc6bc3f9c1fb4832a4d61bfbddfb508",
+      "path": "/v1/admin/telemetry",
+      "readOnly": true,
+      "tags": [
+        "effect:read",
+        "idempotent",
+        "method:GET"
+      ]
+    },
+    {
+      "description": "Requires fresh boxes.close authority. Observes the recorded operation without replaying a provider mutation. Only matching ownership, storage and target state can resolve uncertainty. No query parameters are accepted. Mutations commit an intention before dispatch and dispatch at most once. Lost or late results remain unconfirmed. Responses contain stored observations and reserved, not measured, runtime.",
+      "effect": "write",
+      "id": "reconcilePersistentBox",
+      "idempotent": false,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "f3bfaf2cf54929d4d02385bb5160f50b26fb64128cff3c638a2b60991651f4ae",
+      "method": "POST",
+      "name": "Reconcile a retained hosted box",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "560d3f424bf3569a36bff6e880a57518fc05abe753cc8ef5daf7bc0b234d6050",
+      "path": "/v1/organizations/{organizationId}/persistent-boxes/{boxId}/reconcile",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "non-idempotent",
+        "method:POST"
+      ]
+    },
+    {
+      "description": "Inspect a protected guest receipt without executing the command again",
+      "effect": "write",
+      "id": "recoverHostedWorkspace",
+      "idempotent": false,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "cba5684508e11162ecddfe4d59d474380cb175de6be86bce6fbfe39ac839c978",
+      "method": "POST",
+      "name": "Inspect a protected guest receipt without executing the command again",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "59a2db624b580403809b2cb3bd119bfad6e3a20076501a0f381f0fd64e344418",
+      "path": "/v1/workspaces/{workspaceId}/recover",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "non-idempotent",
+        "method:POST"
+      ]
+    },
+    {
+      "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode.",
+      "effect": "write",
+      "id": "register",
+      "idempotent": false,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "b1f38984e19088c47a5f387b4111ab7ef57eea03ab7271c338168e8225855314",
+      "method": "POST",
+      "name": "Invite-only registration with email proof: without \"code\" a 6-digit code is emailed; with the code a license is issued",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "e974a275b9514d5827fc08a26aa8b84cc0aeafe725d0c4f91a60d2443a6b448a",
+      "path": "/v1/auth/register",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "non-idempotent",
+        "method:POST"
+      ]
+    },
+    {
+      "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured.",
+      "effect": "write",
+      "id": "removeMember",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "a210212438aaf2b0db2d94c0082e74f141af8c1f3c5a244a8260f968b5082969",
+      "method": "DELETE",
+      "name": "Remove a member",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "3aad44d76bdf60cdde65a6cf714b005f24d33a95a2c4253f05287202e46a500e",
+      "path": "/v1/organizations/{organizationId}/members/{userId}",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "idempotent",
+        "method:DELETE"
+      ]
+    },
+    {
+      "description": "Request beta access; one uniform answer, existing entries are never overwritten",
+      "effect": "write",
+      "id": "requestAccess",
+      "idempotent": false,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "b1f38984e19088c47a5f387b4111ab7ef57eea03ab7271c338168e8225855314",
+      "method": "POST",
+      "name": "Request beta access; one uniform answer, existing entries are never overwritten",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "bead07c2b95f71fbc1b3af288d8bbea0f25818f87462bf62e2d10286f78f29f7",
+      "path": "/v1/waitlist",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "non-idempotent",
+        "method:POST"
+      ]
+    },
+    {
+      "description": "Execute once in the retained guest directory; ambiguous execution remains uncertain",
+      "effect": "write",
+      "id": "runHostedWorkspace",
+      "idempotent": false,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "310ef56e04e3ed1be3032d82420489529b71a09e3e9023203a1cee74b96f7544",
+      "method": "POST",
+      "name": "Execute once in the retained guest directory; ambiguous execution remains uncertain",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "80c18c22abbadad26e5ab195719feeac881ceddd83d2f0d97efd7e0701376564",
+      "path": "/v1/workspaces/{workspaceId}/run",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "non-idempotent",
+        "method:POST"
+      ]
+    },
+    {
+      "description": "Requires fresh JackAISaaS boxes.persistent.write authority and positive durable/shared quotas. A confirmed stop is required. Reserves additional monthly runtime and arms independent enforcement before starting the pinned allocation. Retained storage stays reserved. No query parameters are accepted. Mutations commit an intention before dispatch and dispatch at most once. Lost or late results remain unconfirmed. Responses contain stored observations and reserved, not measured, runtime. An idempotency key is required in the header or body; both must match when supplied together.",
+      "effect": "write",
+      "id": "startPersistentBox",
+      "idempotent": false,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "7eec7c9e5ae5bfc4a281c3ce454c5eaca7415a1126896eaaab2d634c63b53dfc",
+      "method": "POST",
+      "name": "Start a retained hosted box",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "560d3f424bf3569a36bff6e880a57518fc05abe753cc8ef5daf7bc0b234d6050",
+      "path": "/v1/organizations/{organizationId}/persistent-boxes/{boxId}/start",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "non-idempotent",
+        "method:POST"
+      ]
+    },
+    {
+      "description": "Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Stops the box at the provider, then records it stopped.",
+      "effect": "write",
+      "id": "stopBox",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "688a7839823600f07960e1ba05ae15eec2cad03d11f4c3af68c8284af134e42f",
+      "method": "DELETE",
+      "name": "Stop a hosted box",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "ff364e62c7e3050cb7f2eaafa140fb07010df56e9584c42601ab853fe676b07c",
+      "path": "/v1/organizations/{organizationId}/boxes/{boxId}",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "idempotent",
+        "method:DELETE"
+      ]
+    },
+    {
+      "description": "Requires fresh boxes.close authority, including after a paid-feature downgrade. Stops the pinned allocation while retaining its disk, box count and existing runtime reservations. No query parameters are accepted. Mutations commit an intention before dispatch and dispatch at most once. Lost or late results remain unconfirmed. Responses contain stored observations and reserved, not measured, runtime. An idempotency key is required in the header or body; both must match when supplied together.",
+      "effect": "write",
+      "id": "stopPersistentBox",
+      "idempotent": false,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "534e76b64f16dafca9c09d75acc7b8c8063d047c14f2385f561a76f4f5e7e4ee",
+      "method": "POST",
+      "name": "Stop a retained hosted box",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "560d3f424bf3569a36bff6e880a57518fc05abe753cc8ef5daf7bc0b234d6050",
+      "path": "/v1/organizations/{organizationId}/persistent-boxes/{boxId}/stop",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "non-idempotent",
+        "method:POST"
+      ]
+    },
+    {
+      "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Authenticated by the Stripe-Signature header (HMAC-SHA256 with the endpoint secret, 5-minute tolerance); live-mode events are refused. Answers 503 billing_unavailable until the Stripe secrets are configured.",
+      "effect": "write",
+      "id": "stripeWebhook",
+      "idempotent": false,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "c7c69ffea7e3e6af99994c9347a2f29c4a558bdf8854ac3b61df817cbadcd1f7",
+      "method": "POST",
+      "name": "Stripe webhook",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "7171cbe0d3381a53a24bde9e6f89fdaca8d8209e4d39dfbdc68cd18cc6ad4ee1",
+      "path": "/v1/billing/stripe/webhook",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "non-idempotent",
+        "method:POST"
+      ]
+    },
+    {
+      "description": "Requires a JackAISaaS product session. Answers 503 execution_api_unavailable until production storage is configured. Managed admission requires an explicit cloud.jobs (or cloud.agents) entitlement and valid jobsPerMonth (or agentRunsPerMonth) quota from the Hub; a plan name alone grants nothing.",
+      "effect": "write",
+      "id": "submitJob",
+      "idempotent": false,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "b1f38984e19088c47a5f387b4111ab7ef57eea03ab7271c338168e8225855314",
+      "method": "POST",
+      "name": "Submit an idempotent job (Idempotency-Key header)",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "8b1ab161679088d837dad66c8142de0c7039559253e7de253c630b8a07ea8d7d",
+      "path": "/v1/jobs",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "non-idempotent",
+        "method:POST"
+      ]
+    },
+    {
+      "description": "Requires current boxes.write product-session authorization for this exact organization. The server timestamps the snapshot, isolates it by actor and source, and expires it after 24 hours. No credentials, metrics, command output or guest contents are accepted. This does not create boxes or charge usage.",
+      "effect": "write",
+      "id": "syncObservedBoxes",
+      "idempotent": false,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "cd47c23728ec158f9f93afa24682089f30dbc7a43f965b2728e6065c46fdb6ae",
+      "method": "POST",
+      "name": "Replace one actor-owned client observation snapshot",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "003a10c7afaf5ce3d0895fc985bf2481f2acda3e85166de9ec020d4e54f28450",
+      "path": "/v1/organizations/{organizationId}/observed-boxes/sync",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "non-idempotent",
+        "method:POST"
+      ]
+    },
+    {
+      "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode.",
+      "effect": "write",
+      "id": "updateAuthGate",
+      "idempotent": true,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "b1f38984e19088c47a5f387b4111ab7ef57eea03ab7271c338168e8225855314",
+      "method": "PUT",
+      "name": "Open or close public registration, approve or revoke an invited email",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "8e99e159c9ba356eee02e8827b78ff1c5fbe74236ddd9ea5f2d5cb867f09d1c3",
+      "path": "/v1/auth/gate",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "idempotent",
+        "method:PUT"
+      ]
+    },
+    {
+      "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode.",
+      "effect": "write",
+      "id": "updatePlan",
+      "idempotent": false,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "b1f38984e19088c47a5f387b4111ab7ef57eea03ab7271c338168e8225855314",
+      "method": "POST",
+      "name": "Enable, disable or delete a plan",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "8e99e159c9ba356eee02e8827b78ff1c5fbe74236ddd9ea5f2d5cb867f09d1c3",
+      "path": "/v1/admin/plans",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "non-idempotent",
+        "method:POST"
+      ]
+    },
+    {
+      "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode. Requires a JackAISaaS product session for this organization. Answers 503 until production storage is configured. Adding an active member counts against the plan seat limit (402 quota_exceeded).",
+      "effect": "write",
+      "id": "upsertMember",
+      "idempotent": false,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "e5dbe7dfa2b95895f011d9ec6bef47595ff83ff0dd03d128ff10f0a2832fc881",
+      "method": "POST",
+      "name": "Add or update a member",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "99517de82992956d031997cc5b36a3693b73216a02326a1abf7c75770f054e8d",
+      "path": "/v1/organizations/{organizationId}/members",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "non-idempotent",
+        "method:POST"
+      ]
+    },
+    {
+      "description": "In managed-connected mode this operation returns 409 account_authority_required with accountUrl and portalUrl; JackAISaaS owns the account or billing decision. The local behavior described here applies only to explicitly selected isolated-standalone or federated-autonomous mode.",
+      "effect": "write",
+      "id": "verifyLicense",
+      "idempotent": false,
+      "inputModes": [
+        "application/json"
+      ],
+      "inputSchemaDigest": "b1f38984e19088c47a5f387b4111ab7ef57eea03ab7271c338168e8225855314",
+      "method": "POST",
+      "name": "Verify a license token and the active plan gate",
+      "outputModes": [
+        "application/json"
+      ],
+      "outputSchemaDigest": "26bd6a6d7ce90ed14591835df6ae5b8159afb535ee06b4f67711fe691ad32997",
+      "path": "/v1/auth/verify",
+      "readOnly": false,
+      "tags": [
+        "effect:write",
+        "non-idempotent",
+        "method:POST"
+      ]
+    }
+  ],
+  "url": "https://boxfleet.io",
+  "version": "0.3.0"
+}

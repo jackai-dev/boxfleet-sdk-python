@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "boxfleet-hosted-control-plane-boxfleet-io-python-sdk": {
+      "args": [
+        "-m",
+        "omniwrap_boxfleet_hosted_control_plane_boxfleet_io_mcp.server"
+      ],
+      "command": "python",
+      "env": {
+        "OMNIWRAP_MCP_ALLOWED_OPERATIONS": "",
+        "OMNIWRAP_MCP_AUTH_JSON": "{}",
+        "OMNIWRAP_MCP_BASE_URL": "",
+        "OMNIWRAP_MCP_CREDENTIAL_ADMINTOKEN": "",
+        "OMNIWRAP_MCP_CREDENTIAL_LICENSETOKEN": "",
+        "OMNIWRAP_MCP_CREDENTIAL_PRODUCTSESSION": "",
+        "OMNIWRAP_MCP_EXECUTE": "",
+        "OMNIWRAP_MCP_READ_ONLY": "0"
+      }
+    }
+  }
+}

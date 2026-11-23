@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "boxfleet-hosted-control-plane-boxfleet-io-knowledge": {
+      "command": "python",
+      "args": [
+        "server.py"
+      ]
+    }
+  }
+}
